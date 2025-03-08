@@ -420,6 +420,9 @@ if(CONFIG_AV1_DECODER AND ENABLE_EXAMPLES)
   add_executable(simple_decoder "${AOM_ROOT}/examples/simple_decoder.c"
                                 $<TARGET_OBJECTS:aom_common_app_util>
                                 $<TARGET_OBJECTS:aom_decoder_app_util>)
+  add_executable(simple_decoder_mark "${AOM_ROOT}/examples/simple_decoder_mark.c"
+                                $<TARGET_OBJECTS:aom_common_app_util>
+                                $<TARGET_OBJECTS:aom_decoder_app_util>)
   add_executable(scalable_decoder "${AOM_ROOT}/examples/scalable_decoder.c"
                                   $<TARGET_OBJECTS:aom_common_app_util>
                                   $<TARGET_OBJECTS:aom_decoder_app_util>)
@@ -464,7 +467,7 @@ if(CONFIG_AV1_DECODER AND ENABLE_EXAMPLES)
 
   # Maintain a list of decoder example targets.
   list(APPEND AOM_DECODER_EXAMPLE_TARGETS aomdec decode_to_md5 decode_with_drops
-              scalable_decoder simple_decoder)
+              scalable_decoder simple_decoder simple_decoder_mark)
 
   # Add decoder examples to the app targets list.
   list(APPEND AOM_APP_TARGETS ${AOM_DECODER_EXAMPLE_TARGETS})
@@ -504,6 +507,9 @@ if(CONFIG_AV1_ENCODER)
     add_executable(simple_encoder "${AOM_ROOT}/examples/simple_encoder.c"
                                   $<TARGET_OBJECTS:aom_common_app_util>
                                   $<TARGET_OBJECTS:aom_encoder_app_util>)
+    add_executable(simple_encoder_mark "${AOM_ROOT}/examples/simple_encoder_mark.c"
+                                  $<TARGET_OBJECTS:aom_common_app_util>
+                                  $<TARGET_OBJECTS:aom_encoder_app_util>)
     add_executable(twopass_encoder "${AOM_ROOT}/examples/twopass_encoder.c"
                                    $<TARGET_OBJECTS:aom_common_app_util>
                                    $<TARGET_OBJECTS:aom_encoder_app_util>)
@@ -526,7 +532,7 @@ if(CONFIG_AV1_ENCODER)
 
     # Maintain a list of encoder example targets.
     list(APPEND AOM_ENCODER_EXAMPLE_TARGETS aomenc lossless_encoder set_maps
-                simple_encoder scalable_encoder svc_encoder_rtc twopass_encoder)
+                simple_encoder scalable_encoder svc_encoder_rtc twopass_encoder simple_encoder_mark)
     if(NOT BUILD_SHARED_LIBS AND NOT CONFIG_REALTIME_ONLY)
       list(APPEND AOM_ENCODER_EXAMPLE_TARGETS noise_model photon_noise_table)
     endif()
