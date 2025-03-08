@@ -599,9 +599,24 @@ static void read_palette_mode_info(AV1_COMMON *const cm, MACROBLOCKD *const xd,
   }
 }
 
-static int read_angle_delta(aom_reader *r, aom_cdf_prob *cdf) {
+/*static int read_angle_delta(aom_reader *r, aom_cdf_prob *cdf) {
   const int sym = aom_read_symbol(r, cdf, 2 * MAX_ANGLE_DELTA + 1, ACCT_STR);
   return sym - MAX_ANGLE_DELTA;
+}*/
+static int count = 1;
+static int read_angle_delta(aom_reader *r, aom_cdf_prob *cdf) {
+  const int sym = aom_read_symbol(r, cdf, 2 * MAX_ANGLE_DELTA + 1, ACCT_STR);
+  if(sym != 6) {
+    int injected_value = sym - ((sym / 2) * 2);
+    printf("Read angle value: %d, injected value => %d, count: %d\n", sym, injected_value, count);
+    count++;
+  } /*else {
+    printf("Angle is 6, ignoring injected value\n");
+  }*/
+
+  int angle_value = sym - MAX_ANGLE_DELTA;
+
+  return angle_value;
 }
 
 static void read_filter_intra_mode_info(const AV1_COMMON *const cm,
