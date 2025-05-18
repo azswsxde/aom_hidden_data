@@ -599,16 +599,16 @@ static void read_palette_mode_info(AV1_COMMON *const cm, MACROBLOCKD *const xd,
   }
 }
 
-/*static int read_angle_delta(aom_reader *r, aom_cdf_prob *cdf) {
+static int read_angle_delta(aom_reader *r, aom_cdf_prob *cdf) {
   const int sym = aom_read_symbol(r, cdf, 2 * MAX_ANGLE_DELTA + 1, ACCT_STR);
   return sym - MAX_ANGLE_DELTA;
-}*/
+}
 static int count = 1;
-static int read_angle_delta(aom_reader *r, aom_cdf_prob *cdf) {
+static int read_angle_delta_(aom_reader *r, aom_cdf_prob *cdf, BLOCK_SIZE bsize) {
   const int sym = aom_read_symbol(r, cdf, 2 * MAX_ANGLE_DELTA + 1, ACCT_STR);
   if(sym != 6) {
     int injected_value = sym - ((sym / 2) * 2);
-    printf("Read angle value: %d, injected value => %d, count: %d\n", sym, injected_value, count);
+    printf("Read angle value: %d, injected value => %d, count: %d, bsize: %d\n", sym, injected_value, count, bsize);
     count++;
   } /*else {
     printf("Angle is 6, ignoring injected value\n");
@@ -829,10 +829,22 @@ static void read_intra_frame_mode_info(AV1_COMMON *const cm,
   mbmi->mode = read_intra_mode(r, get_y_mode_cdf(ec_ctx, above_mi, left_mi));
 
   const int use_angle_delta = av1_use_angle_delta(bsize);
-  mbmi->angle_delta[PLANE_TYPE_Y] =
+
+  if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
+  {
+    if (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+    {
+      printf("frame type %d ",cm->current_frame.frame_type);
+      mbmi->angle_delta[PLANE_TYPE_Y] = read_angle_delta_(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize);
+    }
+    else
+       read_angle_delta(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED]);
+  }
+  else mbmi->angle_delta[PLANE_TYPE_Y] = 0;
+  /*mbmi->angle_delta[PLANE_TYPE_Y] =
       (use_angle_delta && av1_is_directional_mode(mbmi->mode))
-          ? read_angle_delta(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED])
-          : 0;
+          ? read_angle_delta_(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize)
+          : 0;*/
 
   if (!cm->seq_params->monochrome && xd->is_chroma_ref) {
     mbmi->uv_mode =
@@ -1090,10 +1102,21 @@ static void read_intra_block_mode_info(AV1_COMMON *const cm,
 
   mbmi->mode = read_intra_mode(r, ec_ctx->y_mode_cdf[size_group_lookup[bsize]]);
 
-  mbmi->angle_delta[PLANE_TYPE_Y] =
+  if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
+  {
+    if (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+    {
+      printf("frame type %d ",cm->current_frame.frame_type);
+      mbmi->angle_delta[PLANE_TYPE_Y] = read_angle_delta_(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize);
+    }
+    else
+       read_angle_delta(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED]);
+  }
+  else mbmi->angle_delta[PLANE_TYPE_Y] = 0;
+  /*mbmi->angle_delta[PLANE_TYPE_Y] =
       use_angle_delta && av1_is_directional_mode(mbmi->mode)
-          ? read_angle_delta(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED])
-          : 0;
+          ? read_angle_delta_(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize)
+          : 0;*/
   if (!cm->seq_params->monochrome && xd->is_chroma_ref) {
     mbmi->uv_mode =
         read_intra_mode_uv(ec_ctx, r, is_cfl_allowed(xd), mbmi->mode);
