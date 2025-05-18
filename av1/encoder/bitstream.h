@@ -130,7 +130,7 @@ void av1_write_last_tile_info(
 
 int av1_pack_bitstream(struct AV1_COMP *const cpi, uint8_t *dst,
                        size_t dst_size, size_t *size,
-                       int *const largest_tile_id, bool hide_data);
+                       int *const largest_tile_id);
 
 void av1_write_tx_type(const AV1_COMMON *const cm, const MACROBLOCKD *xd,
                        TX_TYPE tx_type, TX_SIZE tx_size, aom_writer *w);

@@ -54,7 +54,7 @@
 #define ENC_MISMATCH_DEBUG 0
 #define SETUP_TIME_OH_CONST 5     // Setup time overhead constant per worker
 #define JOB_DISP_TIME_OH_CONST 1  // Job dispatch time overhead per tile
-static bool m_hide_data = false;
+
 static inline void write_uniform(aom_writer *w, int n, int v) {
   const int l = get_unsigned_bits(n);
   const int m = (1 << l) - n;
@@ -616,36 +616,6 @@ static inline void write_filter_intra_mode_info(const AV1_COMMON *cm,
   }
 }
 
-static int hidden_data[] = { 0, 0, 1, 1 };
-static int hidden_values = 4;
-static int current_value_index = 0;
-static int count = 1;
-
-static inline void write_angle_delta_(aom_writer *w, int angle_delta, aom_cdf_prob *cdf) {
-int abs_angle = angle_delta + MAX_ANGLE_DELTA;
-
-int written_angle;
-
-if(abs_angle != 6) {
-  int hidden_value = hidden_data[current_value_index];
-  current_value_index = (current_value_index + 1) % hidden_values;
-
-  int sub_angle = (abs_angle / 2) * 2; 
-  written_angle = sub_angle + hidden_value;
-  printf("Abs angle: %d, Hidden value: %d ,count: %d", abs_angle, hidden_value, count);
-  //printf("%d,%d,%d", abs_angle, hidden_value, count);
-  count ++;
-} else {
-  printf("Abs angle is 6, skipping information hiding");
-  written_angle = abs_angle;
-}
-
-//printf(", Written angle: %d\n", written_angle);
-printf(",%d\n", written_angle);
-
-aom_write_symbol(w, written_angle, cdf, 2 * MAX_ANGLE_DELTA + 1);
-}
-
 static inline void write_angle_delta(aom_writer *w, int angle_delta,
                                      aom_cdf_prob *cdf) {
   aom_write_symbol(w, angle_delta + MAX_ANGLE_DELTA, cdf,
@@ -1050,13 +1020,9 @@ static inline void write_intra_prediction_modes(const AV1_COMMON *cm,
 
   // Y angle delta.
   const int use_angle_delta = av1_use_angle_delta(bsize);
-  //printf("mode %d av1_is_directional_mode %d\n",mode, av1_is_directional_mode(mode));
   if (use_angle_delta && av1_is_directional_mode(mode)) {
-    //printf("y angle delta\n");
-    if (m_hide_data == true)
-      write_angle_delta_(w, mbmi->angle_delta[PLANE_TYPE_Y],  ec_ctx->angle_delta_cdf[mode - V_PRED]);
-    else
-      write_angle_delta(w, mbmi->angle_delta[PLANE_TYPE_Y],  ec_ctx->angle_delta_cdf[mode - V_PRED]);
+    write_angle_delta(w, mbmi->angle_delta[PLANE_TYPE_Y],
+                      ec_ctx->angle_delta_cdf[mode - V_PRED]);
   }
 
   // UV mode and UV angle delta.
@@ -1066,13 +1032,9 @@ static inline void write_intra_prediction_modes(const AV1_COMMON *cm,
     if (uv_mode == UV_CFL_PRED)
       write_cfl_alphas(ec_ctx, mbmi->cfl_alpha_idx, mbmi->cfl_alpha_signs, w);
     const PREDICTION_MODE intra_mode = get_uv_mode(uv_mode);
-    //printf("mode %d av1_is_directional_mode %d\n",intra_mode, av1_is_directional_mode(intra_mode));
     if (use_angle_delta && av1_is_directional_mode(intra_mode)) {
-      //printf("uv angle delta\n");
-      if (m_hide_data == true)
-        write_angle_delta_(w, mbmi->angle_delta[PLANE_TYPE_UV], ec_ctx->angle_delta_cdf[intra_mode - V_PRED]);
-      else
-        write_angle_delta(w, mbmi->angle_delta[PLANE_TYPE_UV], ec_ctx->angle_delta_cdf[intra_mode - V_PRED]);
+      write_angle_delta(w, mbmi->angle_delta[PLANE_TYPE_UV],
+                        ec_ctx->angle_delta_cdf[intra_mode - V_PRED]);
     }
   }
 
@@ -4308,132 +4270,8 @@ static size_t av1_write_metadata_array(AV1_COMP *const cpi, uint8_t *dst,
   return total_bytes_written;
 }
 
-/*int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t dst_size,
-                       size_t *size, int *const largest_tile_id) {printf("%s  %s  %d largest_tile_id %d\n", __FILE__ ,__func__,__LINE__,*largest_tile_id);
-  uint8_t *data = dst;
-  size_t data_size = dst_size;
-  AV1_COMMON *const cm = &cpi->common;
-  AV1LevelParams *const level_params = &cpi->ppi->level_params;
-  uint32_t obu_header_size = 0;
-  uint32_t obu_payload_size = 0;
-  FrameHeaderInfo fh_info = { NULL, 0, 0 };
-  const uint8_t obu_extension_header =
-      cm->temporal_layer_id << 5 | cm->spatial_layer_id << 3 | 0;
-
-  // If no non-zero delta_q has been used, reset delta_q_present_flag
-  if (cm->delta_q_info.delta_q_present_flag && cpi->deltaq_used == 0) {
-    cm->delta_q_info.delta_q_present_flag = 0;
-  }
-
-#if CONFIG_BITSTREAM_DEBUG
-  bitstream_queue_reset_write();
-#endif
-
-  cpi->frame_header_count = 0;
-
-  // The TD is now written outside the frame encode loop
-
-  // write sequence header obu at each key frame or intra_only frame,
-  // preceded by 4-byte size
-  if (cm->current_frame.frame_type == INTRA_ONLY_FRAME ||
-      cm->current_frame.frame_type == KEY_FRAME) {
-    // OBU header is either one or two bytes.
-    if (data_size < 2) {
-      return AOM_CODEC_ERROR;
-    }
-    obu_header_size = av1_write_obu_header(
-        level_params, &cpi->frame_header_count, OBU_SEQUENCE_HEADER,
-        cm->seq_params->has_nonzero_operating_point_idc,
-        /*is_layer_specific_obu=*\/false, 0, data);
-    assert(obu_header_size <= 2);
-    obu_payload_size = av1_write_sequence_header_obu(
-        cm->seq_params, data + obu_header_size, data_size - obu_header_size);
-    const size_t length_field_size =
-        obu_memmove(obu_header_size, obu_payload_size, data, data_size);
-    if (length_field_size == 0) {
-      return AOM_CODEC_ERROR;
-    }
-    if (av1_write_uleb_obu_size(obu_payload_size, data + obu_header_size,
-                                length_field_size) != AOM_CODEC_OK) {
-      return AOM_CODEC_ERROR;
-    }
-
-    const size_t bytes_written =
-        obu_header_size + length_field_size + obu_payload_size;
-    data += bytes_written;
-    data_size -= bytes_written;
-  }
-
-  // write metadata obus before the frame obu that has the show_frame flag set
-  if (cm->show_frame) {
-    const size_t bytes_written = av1_write_metadata_array(cpi, data, data_size);
-    data += bytes_written;
-    data_size -= bytes_written;
-  }
-
-  const int write_frame_header =
-      (cpi->num_tg > 1 || encode_show_existing_frame(cm));
-  struct aom_write_bit_buffer saved_wb = { NULL, 0 };
-  size_t length_field = 0;
-  if (write_frame_header) {
-    // Write Frame Header OBU.
-    fh_info.frame_header = data;
-    // OBU header is either one or two bytes.
-    if (data_size < 2) {
-      return AOM_CODEC_ERROR;
-    }
-    obu_header_size = av1_write_obu_header(
-        level_params, &cpi->frame_header_count, OBU_FRAME_HEADER,
-        cm->seq_params->has_nonzero_operating_point_idc,
-        /*is_layer_specific_obu=*\/true, obu_extension_header, data);
-    // TODO: bug 42302568 - Pass data_size - obu_header_size to
-    // write_frame_header_obu().
-    obu_payload_size = write_frame_header_obu(cpi, &cpi->td.mb.e_mbd, &saved_wb,
-                                              data + obu_header_size, 1);
-
-    length_field =
-        obu_memmove(obu_header_size, obu_payload_size, data, data_size);
-    if (length_field == 0) {
-      return AOM_CODEC_ERROR;
-    }
-    if (av1_write_uleb_obu_size(obu_payload_size, data + obu_header_size,
-                                length_field) != AOM_CODEC_OK) {
-      return AOM_CODEC_ERROR;
-    }
-
-    fh_info.obu_header_byte_offset = 0;
-    fh_info.total_length = obu_header_size + length_field + obu_payload_size;
-    // Make sure it is safe to cast fh_info.total_length to uint32_t.
-    if (fh_info.total_length > UINT32_MAX) {
-      return AOM_CODEC_ERROR;
-    }
-    data += fh_info.total_length;
-    data_size -= fh_info.total_length;
-  }
-
-  if (!encode_show_existing_frame(cm)) {
-    // Since length_field is determined adaptively after frame header
-    // encoding, saved_wb must be adjusted accordingly.
-    if (saved_wb.bit_buffer != NULL) {
-      saved_wb.bit_buffer += length_field;
-    }
-
-    //  Each tile group obu will be preceded by 4-byte size of the tile group
-    //  obu
-    const size_t bytes_written =
-        write_tiles_in_tg_obus(cpi, data, data_size, &saved_wb,
-                               obu_extension_header, &fh_info, largest_tile_id);
-    data += bytes_written;
-    data_size -= bytes_written;
-  }
-  *size = data - dst;
-  (void)data_size;
-  return AOM_CODEC_OK;
-}*/
-
 int av1_pack_bitstream(AV1_COMP *const cpi, uint8_t *dst, size_t dst_size,
-                       size_t *size, int *const largest_tile_id, bool hide_data) {printf("%s  %s  %d largest_tile_id %d\n", __FILE__ ,__func__,__LINE__,*largest_tile_id);
-  m_hide_data = hide_data;
+                       size_t *size, int *const largest_tile_id) {
   uint8_t *data = dst;
   size_t data_size = dst_size;
   AV1_COMMON *const cm = &cpi->common;
