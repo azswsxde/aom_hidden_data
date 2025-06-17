@@ -18,6 +18,9 @@
 #include "av1/encoder/encoder_utils.h"
 #include "av1/encoder/rdopt.h"
 
+#include "av1/encoder/tx_search.h"
+#include "av1/encoder/intra_mode_search_utils.h"
+#include <stdio.h>
 void av1_set_ssim_rdmult(const AV1_COMP *const cpi, int *errorperbit,
                          const BLOCK_SIZE bsize, const int mi_row,
                          const int mi_col, int *const rdmult) {
@@ -169,9 +172,21 @@ static inline void copy_mbmi_ext_frame_to_mbmi_ext(
          sizeof(mbmi_ext->global_mvs));
 }
 
+static int hidden_data[] = { 0, 0, 1, 1 };
+static int hidden_values = 4;
+static int message_size = 238580;
+//static int message_size = 120;
+static int end_keyword_data[] = {0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1};
+static int end_keyword_value = 24;
+static int current_value_index = 0;
+static int current_keyword_index = 0;
+static int hidden_bits_count = 0;
+// include End Keyord
+static const int max_message_size = 238604;
+
 void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
                       const PICK_MODE_CONTEXT *const ctx, int mi_row,
-                      int mi_col, BLOCK_SIZE bsize, RUN_TYPE dry_run) {
+                      int mi_col, BLOCK_SIZE bsize, RUN_TYPE dry_run, bool DoHiddingData) {
   int i, x_idx, y;
   const AV1_COMMON *const cm = &cpi->common;
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
@@ -180,7 +195,7 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
   MACROBLOCKD *const xd = &x->e_mbd;
   struct macroblock_plane *const p = x->plane;
   struct macroblockd_plane *const pd = xd->plane;
-  const MB_MODE_INFO *const mi = &ctx->mic;
+  MB_MODE_INFO *const mi = &ctx->mic;
   MB_MODE_INFO *const mi_addr = xd->mi[0];
   const struct segmentation *const seg = &cm->seg;
   assert(bsize < BLOCK_SIZES_ALL);
@@ -192,6 +207,44 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
   TxfmSearchInfo *txfm_info = &x->txfm_search_info;
 
   assert(mi->bsize == bsize);
+
+  // 中文：確認區塊使用方向性預測模式，僅此類模式可調整角度以嵌入資料 ; ENG: Check if the block uses directional intra prediction mode, which supports angle_delta for embedding
+  // 中文：僅當區塊尺寸大於 8x8 時允許使用 angle_delta，避免在小區塊中嵌入資料 ; ENG: Only blocks larger than 8x8 support angle_delta; skip small blocks to ensure legality
+  // 中文：僅在啟用資料嵌入階段時進行嵌入，例如在 pick_partition 階段，而非 RDO 階段 ; ENG: Enable embedding only during designated embedding phase (e.g., pick_partition), not during RDO
+  // 中文：當 angle_delta 已達上限（3）時無法再加 1 嵌入資料，避免越界 ; ENG: Skip blocks where angle_delta is already 3, since adding 1 would exceed legal range
+  // 中文：排除 dry run 模式，dry run 僅模擬流程不應實際寫入資料 ; ENG: Exclude dry run mode to avoid embedding data during simulation
+  // 中文：僅在純內部預測畫面（keyframe 或 intra-only）進行嵌入，避免與 inter 預測干擾 ; ENG: Restrict embedding to intra-coded frames (keyframe or intra-only) to prevent interference with inter prediction
+  if (  av1_is_directional_mode(mi->mode)
+     && av1_use_angle_delta(mi->bsize)
+     && DoHiddingData
+     && mi->angle_delta[PLANE_TYPE_Y] < 3
+     && !dry_run
+     && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+     && (message_size + end_keyword_value) <= max_message_size
+     && hidden_bits_count < (message_size + end_keyword_value)
+     )
+  {
+    int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
+    int written_angle = abs_angle;
+    int hidden_value = 0;
+    int sub_angle = (abs_angle / 2) * 2; 
+    if (hidden_bits_count < message_size)
+    {
+      hidden_bits_count++;
+      hidden_value = hidden_data[current_value_index];
+      current_value_index = (current_value_index + 1) % hidden_values;      
+      written_angle = sub_angle + hidden_value;
+    }
+    else
+    {
+      hidden_bits_count++;
+      hidden_value = end_keyword_data[current_keyword_index];
+      current_keyword_index = (current_keyword_index + 1) % end_keyword_value;
+      written_angle = sub_angle + hidden_value;
+    }
+    mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
+    printf("[HIDE] frame type %d, angle_delta %d, abs_angle: %d, embedded: %d → written: %d, total_bits: %d, bsize %d, hidden_bits_count %d\n",cm->current_frame.frame_type, mi->angle_delta[PLANE_TYPE_Y], abs_angle, hidden_value, written_angle, hidden_bits_count, mi->bsize, hidden_bits_count);
+  }
 
   *mi_addr = *mi;
   copy_mbmi_ext_frame_to_mbmi_ext(&x->mbmi_ext, &ctx->mbmi_ext_best,

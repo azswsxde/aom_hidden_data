@@ -372,7 +372,7 @@ void av1_set_saliency_map_vmaf_rdmult(const AV1_COMP *const cpi,
 
 void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
                       const PICK_MODE_CONTEXT *const ctx, int mi_row,
-                      int mi_col, BLOCK_SIZE bsize, RUN_TYPE dry_run);
+                      int mi_col, BLOCK_SIZE bsize, RUN_TYPE dry_run, bool DoHiddingData);
 
 void av1_update_inter_mode_stats(FRAME_CONTEXT *fc, FRAME_COUNTS *counts,
                                  PREDICTION_MODE mode, int16_t mode_context);

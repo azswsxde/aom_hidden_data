@@ -603,19 +603,29 @@ static int read_angle_delta(aom_reader *r, aom_cdf_prob *cdf) {
   const int sym = aom_read_symbol(r, cdf, 2 * MAX_ANGLE_DELTA + 1, ACCT_STR);
   return sym - MAX_ANGLE_DELTA;
 }
-static int count = 1;
+static int count = 1;                   // 紀錄已解析的總位元數（用於資料隱藏訊號統計）
+static bool got_end_keyword = false;    // 標記是否已讀到結尾關鍵字
+static int keyword_buffer = 0;          // 暫存目前累積的資料位元，用於關鍵字比對
+static const int END_KEYWORD = 5129045; // 這是 'NCU' 的 bit pattern，結尾關鍵字 "NCU" 的二進位表示（作為隱藏資料結束符）
+
+// 讀取 angle_delta，並檢查是否讀到隱藏資料的結尾關鍵字（以 "NCU" 為結束符號）
+// 每遇到 sym < 6，從 sym 中提取 1 個隱藏 bit，將其累積到 keyword_buffer，並與結尾關鍵字比對。
+// 若累積值與 END_KEYWORD 相符，表示已經讀到資料結束點。
 static int read_angle_delta_(aom_reader *r, aom_cdf_prob *cdf, BLOCK_SIZE bsize) {
+  // 讀取一個角度 delta 符號（包含資料隱藏訊號）
   const int sym = aom_read_symbol(r, cdf, 2 * MAX_ANGLE_DELTA + 1, ACCT_STR);
-  if(sym != 6) {
-    int injected_value = sym - ((sym / 2) * 2);
+
+  // 僅對可嵌入的 sym 執行資料隱藏比對
+  if(sym < 6) {
+    int injected_value = sym - ((sym / 2) * 2); // 提取隱藏位元
+    keyword_buffer = ((keyword_buffer << 1) | injected_value ) & 0xFFFFFF; // 累積位元流
     printf("Read angle value: %d, injected value => %d, count: %d, bsize: %d\n", sym, injected_value, count, bsize);
     count++;
-  } /*else {
-    printf("Angle is 6, ignoring injected value\n");
-  }*/
+    if (keyword_buffer == END_KEYWORD)
+      got_end_keyword = true;
+  }
 
   int angle_value = sym - MAX_ANGLE_DELTA;
-
   return angle_value;
 }
 
@@ -832,7 +842,7 @@ static void read_intra_frame_mode_info(AV1_COMMON *const cm,
 
   if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
   {
-    if (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) && !got_end_keyword)
     {
       printf("frame type %d ",cm->current_frame.frame_type);
       mbmi->angle_delta[PLANE_TYPE_Y] = read_angle_delta_(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize);
@@ -1104,7 +1114,7 @@ static void read_intra_block_mode_info(AV1_COMMON *const cm,
 
   if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
   {
-    if (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) && !got_end_keyword)
     {
       printf("frame type %d ",cm->current_frame.frame_type);
       mbmi->angle_delta[PLANE_TYPE_Y] = read_angle_delta_(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize);

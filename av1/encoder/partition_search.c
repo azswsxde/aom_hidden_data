@@ -42,7 +42,7 @@
 #endif
 
 #define COLLECT_MOTION_SEARCH_FEATURE_SB 0
-
+static bool DoHiddingData = false;
 #if CONFIG_PARTITION_SEARCH_ORDER
 void av1_reset_part_sf(PARTITION_SPEED_FEATURES *part_sf) {
   part_sf->partition_search_type = SEARCH_PARTITION;
@@ -1423,7 +1423,7 @@ static void encode_b(const AV1_COMP *const cpi, TileDataEnc *tile_data,
   setup_block_rdmult(cpi, x, mi_row, mi_col, bsize, NO_AQ, NULL);
   MB_MODE_INFO *mbmi = xd->mi[0];
   mbmi->partition = partition;
-  av1_update_state(cpi, td, ctx, mi_row, mi_col, bsize, dry_run);
+  av1_update_state(cpi, td, ctx, mi_row, mi_col, bsize, dry_run, DoHiddingData);
 
   if (!dry_run) {
     set_cb_offsets(x->mbmi_ext_frame->cb_offset, x->cb_offset[PLANE_TYPE_Y],
@@ -1755,6 +1755,7 @@ void av1_rd_use_partition(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
                           MB_MODE_INFO **mib, TokenExtra **tp, int mi_row,
                           int mi_col, BLOCK_SIZE bsize, int *rate,
                           int64_t *dist, int do_recon, PC_TREE *pc_tree) {
+  DoHiddingData = false;
   AV1_COMMON *const cm = &cpi->common;
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
   const int num_planes = av1_num_planes(cm);
@@ -1873,7 +1874,7 @@ void av1_rd_use_partition(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
         RD_STATS tmp_rdc;
         const PICK_MODE_CONTEXT *const ctx_h = pc_tree->horizontal[0];
         av1_init_rd_stats(&tmp_rdc);
-        av1_update_state(cpi, td, ctx_h, mi_row, mi_col, subsize, 1);
+        av1_update_state(cpi, td, ctx_h, mi_row, mi_col, subsize, 1, DoHiddingData);
         encode_superblock(cpi, tile_data, td, tp, DRY_RUN_NORMAL, subsize,
                           NULL);
         pick_sb_modes(cpi, tile_data, x, mi_row + hbs, mi_col, &tmp_rdc,
@@ -1908,7 +1909,7 @@ void av1_rd_use_partition(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
         RD_STATS tmp_rdc;
         const PICK_MODE_CONTEXT *const ctx_v = pc_tree->vertical[0];
         av1_init_rd_stats(&tmp_rdc);
-        av1_update_state(cpi, td, ctx_v, mi_row, mi_col, subsize, 1);
+        av1_update_state(cpi, td, ctx_v, mi_row, mi_col, subsize, 1, DoHiddingData);
         encode_superblock(cpi, tile_data, td, tp, DRY_RUN_NORMAL, subsize,
                           NULL);
         pick_sb_modes(cpi, tile_data, x, mi_row, mi_col + hbs, &tmp_rdc,
@@ -2093,7 +2094,7 @@ static void encode_b_nonrd(const AV1_COMP *const cpi, TileDataEnc *tile_data,
   setup_block_rdmult(cpi, x, mi_row, mi_col, bsize, NO_AQ, NULL);
   MB_MODE_INFO *mbmi = xd->mi[0];
   mbmi->partition = partition;
-  av1_update_state(cpi, td, ctx, mi_row, mi_col, bsize, dry_run);
+  av1_update_state(cpi, td, ctx, mi_row, mi_col, bsize, dry_run, DoHiddingData);
   const int subsampling_x = cpi->common.seq_params->subsampling_x;
   const int subsampling_y = cpi->common.seq_params->subsampling_y;
   if (!dry_run) {
@@ -3151,7 +3152,7 @@ static int rd_try_subblock(AV1_COMP *const cpi, ThreadData *td,
   }
 
   if (!is_last) {
-    av1_update_state(cpi, td, this_ctx, mi_row, mi_col, subsize, 1);
+    av1_update_state(cpi, td, this_ctx, mi_row, mi_col, subsize, 1, DoHiddingData);
     encode_superblock(cpi, tile_data, td, tp, DRY_RUN_NORMAL, subsize, NULL);
   }
 
@@ -3598,7 +3599,7 @@ static void rectangular_partition_search(
           part_search_state->is_rect_ctx_is_ready[i] = 1;
       }
       av1_update_state(cpi, td, cur_ctx[i][sub_part_idx][0], blk_params.mi_row,
-                       blk_params.mi_col, blk_params.subsize, DRY_RUN_NORMAL);
+                       blk_params.mi_col, blk_params.subsize, DRY_RUN_NORMAL, DoHiddingData);
       encode_superblock(cpi, tile_data, td, tp, DRY_RUN_NORMAL,
                         blk_params.subsize, NULL);
 
@@ -5484,6 +5485,7 @@ bool av1_rd_pick_partition(AV1_COMP *const cpi, ThreadData *td,
                            SIMPLE_MOTION_DATA_TREE *sms_tree, int64_t *none_rd,
                            SB_MULTI_PASS_MODE multi_pass_mode,
                            RD_RECT_PART_WIN_INFO *rect_part_win_info) {
+  DoHiddingData = true;
   const AV1_COMMON *const cm = &cpi->common;
   const int num_planes = av1_num_planes(cm);
   TileInfo *const tile_info = &tile_data->tile_info;
