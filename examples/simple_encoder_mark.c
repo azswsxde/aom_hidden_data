@@ -109,7 +109,7 @@ static const char *exec_name;
 void usage_exit(void) {
   fprintf(stderr,
           "Usage: %s <codec> <width> <height> <infile> <outfile> "
-          "<keyframe-interval> <error-resilient> <frames to encode>\n"
+          "<keyframe-interval> <error-resilient> <frames to encode> <bitrate>\n"
           "See comments in simple_encoder.c for more information.\n",
           exec_name);
   exit(EXIT_FAILURE);
@@ -153,7 +153,8 @@ int main(int argc, char **argv) {
   AvxVideoWriter *writer = NULL;
   //const int fps = 20;
   int fps = 20;
-  const int bitrate = 5000;
+  //const int bitrate = 5000;
+  int bitrate = 5000;
   int keyframe_interval = 0;
   int max_frames = 0;
   int frames_encoded = 0;
@@ -163,13 +164,16 @@ int main(int argc, char **argv) {
   const char *infile_arg = NULL;
   const char *outfile_arg = NULL;
   const char *keyframe_interval_arg = NULL;
-#if CONFIG_REALTIME_ONLY
+  const char *bitrate_arg = NULL;
+/*#if CONFIG_REALTIME_ONLY
   const int usage = 1;
   const int speed = 7;
 #else
   const int usage = 0;
   const int speed = 2;
-#endif
+#endif*/
+  const int usage = 0;
+  const int speed = 4;
 
   exec_name = argv[0];
 
@@ -177,7 +181,7 @@ int main(int argc, char **argv) {
   // "missing-field-initializers" warning in some compilers.
   memset(&info, 0, sizeof(info));
 
-  if (argc != 9) die("Invalid number of arguments");
+  if (argc != 10) die("Invalid number of arguments");
 
   codec_arg = argv[1]; // only av1
   width_arg = argv[2];
@@ -187,7 +191,8 @@ int main(int argc, char **argv) {
   keyframe_interval_arg = argv[6];
   fps = (int)strtol(keyframe_interval_arg, NULL, 0);
   max_frames = (int)strtol(argv[8], NULL, 0);
-
+  bitrate_arg = argv[9];
+  bitrate = (int)strtol(bitrate_arg, NULL, 0);
   aom_codec_iface_t *encoder = get_aom_encoder_by_short_name(codec_arg);
   if (!encoder) die("Unsupported codec.");
 
