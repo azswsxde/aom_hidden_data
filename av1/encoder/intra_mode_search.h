@@ -306,6 +306,13 @@ static inline void init_intra_mode_search_state(
  */
 void set_y_mode_and_delta_angle(const int mode_idx, MB_MODE_INFO *const mbmi,
                                 int reorder_delta_angle_eval);
+
+// 以 intra_model_rd 估算某個 (mode, angle_delta) 的相對 RD（數值越小越好）。
+// use_hadamard: 建議傳 1（較穩定）。
+int64_t av1_test_intra_angle_delta_model(const AV1_COMP *cpi, MACROBLOCK *x,
+                                         BLOCK_SIZE bsize, PREDICTION_MODE mode,
+                                         int angle_delta, int use_hadamard);
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

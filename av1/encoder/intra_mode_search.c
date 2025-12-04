@@ -1470,6 +1470,29 @@ static inline int prune_luma_odd_delta_angles_using_rd_cost(
              rd_thresh;
 }
 
+int64_t av1_test_intra_angle_delta_model(const AV1_COMP *cpi, MACROBLOCK *x,
+                                         BLOCK_SIZE bsize, PREDICTION_MODE mode,
+                                         int angle_delta, int use_hadamard) {
+  MACROBLOCKD *const xd = &x->e_mbd;
+  MB_MODE_INFO *const mbmi = xd->mi[0];
+
+  // 備份並暫改 mbmi（僅兩個欄位）
+  const MB_MODE_INFO bak = *mbmi;
+  mbmi->mode = mode;
+  mbmi->angle_delta[PLANE_TYPE_Y] = (int8_t)angle_delta;
+
+  // 估算：選擇一個合理 tx_size（模型不會去動 tx map / blk_skip）
+  const TX_SIZE tx_size = AOMMIN(TX_32X32, max_txsize_lookup[bsize]);
+  const int hadamard = use_hadamard ? 1 : 0;
+  int64_t model_rd = intra_model_rd(&cpi->common, x, 0 /*plane Y*/,
+                                    bsize, tx_size, hadamard);
+
+  // 還原
+  *mbmi = bak;
+  return model_rd;
+}
+
+
 // Finds the best non-intrabc mode on an intra frame.
 int64_t av1_rd_pick_intra_sby_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
                                    int *rate, int *rate_tokenonly,
