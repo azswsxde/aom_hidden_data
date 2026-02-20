@@ -724,7 +724,11 @@ void av1_encode_sb(const struct AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
     }
   }
 }
-
+static int hidden_data[] = { 0, 0, 1, 1 };
+static short hidden_values = 4;
+static int current_value_index = 0;
+static int hidden_bits_count = 0;
+static int mark_quant = 0;
 static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
                                BLOCK_SIZE plane_bsize, TX_SIZE tx_size,
                                void *arg) {
@@ -803,6 +807,83 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
       av1_dropout_qcoeff(x, plane, block, tx_size, tx_type,
                          cm->quant_params.base_qindex);
     }
+    //printf("args->dry_run %d\n",args->dry_run);
+#if 1
+    if ( av1_is_directional_mode(mbmi->mode)
+       && av1_use_angle_delta(mbmi->bsize)
+       && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+       && plane == 0
+       && !args->dry_run
+       )
+    {
+      const SCAN_ORDER *const scan_order =
+      get_scan(txfm_param.tx_size, txfm_param.tx_type);
+
+      int32_t *mark_qcoeff  = p->qcoeff + BLOCK_OFFSET(block);
+      tran_low_t *mark_dqcoeff = p->dqcoeff + BLOCK_OFFSET(block);
+      uint16_t eob = p->eobs[block];
+      int hidden_value = 0;
+
+      for (int idx = 1; idx < eob; ++idx)
+      {
+        size_t abs_ac_qcoeff = abs(mark_qcoeff[scan_order->scan[idx]]);
+        // Skip BR HR
+        if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 15)
+        {
+          hidden_value = hidden_data[current_value_index];
+          current_value_index = (current_value_index + 1) % hidden_values;
+          if (mark_dqcoeff[scan_order->scan[idx]] % mark_qcoeff[scan_order->scan[idx]] != 0)
+            continue;
+          hidden_bits_count++;
+          /*int base_q = cm->quant_params.base_qindex;
+          int seg_id = xd->mi[0]->segment_id;
+          int qindex = av1_get_qindex(&cm->seg, seg_id, base_q);
+          printf("base_q=%d qindex=%d seg_id=%d\n", base_q, qindex, seg_id);
+          int qc = mark_qcoeff[scan_order->scan[idx]];
+          int dqc = mark_dqcoeff[scan_order->scan[idx]];
+          int eff_step = (qc==0)?0:(abs(dqc) + abs(qc)/2)/abs(qc);
+          printf("dequant_QTX=%d eff_step~%d qc=%d dqc=%d\n",
+                 *x->plane[0].dequant_QTX, eff_step, qc, dqc);
+          printf("iqm=%p\n", (void*)quant_param.iqmatrix);*/
+
+
+          mark_quant = mark_dqcoeff[scan_order->scan[idx]] / mark_qcoeff[scan_order->scan[idx]];
+          printf("x->plane[0].dequant_QTX %d ori quant %d, qcoeff %d, dqcoeff %d, hide %d   to ",*x->plane[0].dequant_QTX, mark_quant, mark_qcoeff[scan_order->scan[idx]], mark_dqcoeff[scan_order->scan[idx]], hidden_value);
+          if (abs_ac_qcoeff < 9)
+          {
+            if (hidden_value != (abs_ac_qcoeff % 2))
+            {
+              if (mark_qcoeff[scan_order->scan[idx]] > 0)
+              {
+                mark_qcoeff[scan_order->scan[idx]]++;
+              }
+              else 
+              {
+                mark_qcoeff[scan_order->scan[idx]]--;
+              }
+              mark_dqcoeff[scan_order->scan[idx]] = mark_qcoeff[scan_order->scan[idx]] * mark_quant;
+            }
+          }
+          else
+          {
+            if (hidden_value != (abs_ac_qcoeff % 2))
+            {
+              if (mark_qcoeff[scan_order->scan[idx]] > 0)
+              {
+                mark_qcoeff[scan_order->scan[idx]]--;
+              }
+              else 
+              {
+                mark_qcoeff[scan_order->scan[idx]]++;
+              }
+              mark_dqcoeff[scan_order->scan[idx]] = mark_qcoeff[scan_order->scan[idx]] * mark_quant;
+            }
+          }
+          printf("new qcoeff %d, dqcoeff %d hidden_bits_count %d\n", mark_qcoeff[scan_order->scan[idx]], mark_dqcoeff[scan_order->scan[idx]], hidden_bits_count);
+        }
+      }
+    }
+#endif
   }
 
   if (*eob) {

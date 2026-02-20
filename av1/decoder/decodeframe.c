@@ -163,6 +163,51 @@ static inline void inverse_transform_block(DecoderCodingBlock *dcb, int plane,
                               stride, eob, reduced_tx_set);
   memset(dqcoeff, 0, (scan_line + 1) * sizeof(dqcoeff[0]));
 }
+static count = 0;
+static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
+                                           const TX_TYPE tx_type,
+                                           const TX_SIZE tx_size, uint8_t *dst,
+                                           int stride, int reduced_tx_set, const AV1_COMMON *const cm, const MB_MODE_INFO *mbmi, aom_reader *const r) {
+  tran_low_t *const dqcoeff = dcb->dqcoeff_block[plane] + dcb->cb_offset[plane];
+  tran_low_t *mark_dqcoeff = dcb->dqcoeff_block[plane] + dcb->cb_offset[plane];
+  const BLOCK_SIZE bsize = mbmi->bsize;
+  const int use_angle_delta = av1_use_angle_delta(bsize);
+
+  eob_info *eob_data = dcb->eob_data[plane] + dcb->txb_offset[plane];
+  uint16_t scan_line = eob_data->max_scan_line;
+  uint16_t eob = eob_data->eob;
+
+  if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
+    if (plane == 0 /* y plane*/)
+    {
+      const SCAN_ORDER *const scan_order = get_scan(tx_size, tx_type);
+      MACROBLOCKD *const xd = &dcb->xd;
+      struct macroblockd_plane *const pd = &xd->plane[plane];
+      MB_MODE_INFO *const mbmi = xd->mi[0];
+
+      const int16_t dequant = xd->plane[plane].seg_dequant_QTX[mbmi->segment_id][1]; //AC dequant
+      // Skip idx = 0, DC
+      for (int idx = 1; idx < eob; ++idx)
+      {
+        tran_low_t const qcoeff = mark_dqcoeff[scan_order->scan[idx]] / (int)dequant;
+        size_t abs_ac_qcoeff = abs(mark_dqcoeff[scan_order->scan[idx]]) / (int)dequant;
+
+        //printf("dqcoeff %d, dequant%d, qcoeff %d, hide_value %d, ", mark_dqcoeff[scan_order->scan[idx]], (int)dequant, qcoeff, (abs_ac_qcoeff % 2));
+        if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 15)
+        {
+          count++;
+          printf("dqcoeff %d, dequant%d, qcoeff %d, hide_value %d, ", mark_dqcoeff[scan_order->scan[idx]], (int)dequant, qcoeff, (abs_ac_qcoeff % 2));
+          printf("count %d\n", count);
+        }
+        /*else
+          printf("\n");*/
+      }
+    }
+
+  av1_inverse_transform_block(&dcb->xd, dqcoeff, plane, tx_type, tx_size, dst,
+                              stride, eob, reduced_tx_set);
+  memset(dqcoeff, 0, (scan_line + 1) * sizeof(dqcoeff[0]));
+}
 
 static inline void read_coeffs_tx_intra_block(
     const AV1_COMMON *const cm, DecoderCodingBlock *dcb, aom_reader *const r,
@@ -229,9 +274,12 @@ static inline void predict_and_reconstruct_intra_block(
       const TX_TYPE tx_type = av1_get_tx_type(xd, plane_type, row, col, tx_size,
                                               reduced_tx_set_used);
       struct macroblockd_plane *const pd = &xd->plane[plane];
-      uint8_t *dst = &pd->dst.buf[(row * pd->dst.stride + col) << MI_SIZE_LOG2];
-      inverse_transform_block(dcb, plane, tx_type, tx_size, dst, pd->dst.stride,
-                              reduced_tx_set_used);
+      uint8_t *dst = &pd->dst.buf[(row * pd->dst.stride + col) << MI_SIZE_LOG2];      
+
+      if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME))
+        inverse_transform_block_(dcb, plane, tx_type, tx_size, dst, pd->dst.stride, reduced_tx_set_used, cm, mbmi, r);
+      else
+        inverse_transform_block(dcb, plane, tx_type, tx_size, dst, pd->dst.stride, reduced_tx_set_used);
     }
   }
   if (plane == AOM_PLANE_Y && store_cfl_required(cm, xd)) {
