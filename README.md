@@ -1,30 +1,261 @@
-# 教學
-## 編譯
+# AV1 Hidden Data Encoder / Decoder
+
+本專案基於 AV1 編碼器進行資料隱藏實驗，主要研究在 AV1 編碼流程中，透過修改特定編碼資訊來嵌入隱藏資料，並在解碼端進行資料擷取。
+
+This project is based on the AV1 encoder and focuses on data hiding experiments.  
+The main objective is to embed hidden information by modifying selected coding syntax or coding decisions during the AV1 encoding process, and then extract the embedded information during decoding.
+
+---
+
+## 1. Project Overview / 專案介紹
+
+本研究目前主要包含兩種資料隱藏方式：
+
+1. **Angle-based data hiding**  
+   透過 AV1 幀內預測角度模式進行資料嵌入。
+
+2. **Coefficient-based data hiding**  
+   透過 AV1 量化後係數或掃描位置相關資訊進行資料嵌入。
+
+目前資料嵌入內容尚未由外部檔案讀取，而是先以固定的 4-bit 資料不斷重複嵌入，方便進行實驗測試與穩定性分析。
+
+At the current stage, the embedded payload is not read from an external file.  
+Instead, a fixed 4-bit payload is repeatedly embedded for experimental evaluation and stability testing.
+
+---
+
+## 2. Build Instructions / 編譯方式
+
+### 2.1 Clone the Repository / 下載專案
+
+```bash
 git clone https://github.com/azswsxde/aom_hidden_data
+```
+
+### 2.2 Build AOM / 建立 AOM 編譯環境
+
+```bash
 make aom_build
+```
+
+### 2.3 Configure and Compile / 設定與編譯
+
+```bash
 cd aom_build
 cmake path/to/aom_hidden_data
 make
-## 使用
-./simple_encoder_mark av1 (video height) (video width) (yuv file path with name) (output avif path with name) (fps) 0 (total_frame) (bitrate)
-
-./simple_decoder_mark (avif path with name) (out yuv file path with name)
-
-example
 ```
-./simple_encoder_mark av1 1280 720 /home/mark/500GB/testdata/VIRAT.yuv VIRAT_offset0_padding0_hidden_all_y_plane_only.avif  30 0 150 8192 > ~/paper/encode.txt
+
+其中 `path/to/aom_hidden_data` 請替換成實際的專案路徑。
+
+Replace `path/to/aom_hidden_data` with the actual path of this project.
+
+---
+
+## 3. Usage / 使用方式
+
+### 3.1 Encoder / 編碼器
+
+```bash
+./simple_encoder_mark av1 (video height) (video width) (yuv file path with name) (output avif path with name) (fps) 0 (total_frame) (bitrate)
+```
+
+#### Parameters / 參數說明
+
+| Parameter | Description |
+|---|---|
+| `av1` | 使用 AV1 編碼格式 |
+| `video height` | 輸入 YUV 影片高度 |
+| `video width` | 輸入 YUV 影片寬度 |
+| `yuv file path with name` | 輸入 YUV 檔案路徑與檔名 |
+| `output avif path with name` | 輸出 AVIF 檔案路徑與檔名 |
+| `fps` | 影片幀率 |
+| `0` | 起始幀或 offset 參數 |
+| `total_frame` | 編碼總幀數 |
+| `bitrate` | 目標位元率 |
+
+---
+
+### 3.2 Decoder / 解碼器
+
+```bash
+./simple_decoder_mark (avif path with name) (out yuv file path with name)
+```
+
+#### Parameters / 參數說明
+
+| Parameter | Description |
+|---|---|
+| `avif path with name` | 輸入 AVIF 檔案路徑與檔名 |
+| `out yuv file path with name` | 輸出 YUV 檔案路徑與檔名 |
+
+---
+
+## 4. Example / 使用範例
+
+### Encoding / 編碼
+
+```bash
+./simple_encoder_mark av1 1280 720 /home/mark/500GB/testdata/VIRAT.yuv VIRAT_offset0_padding0_hidden_all_y_plane_only.avif 30 0 150 8192 > ~/paper/encode.txt
+```
+
+### Decoding / 解碼
+
+```bash
 ./simple_decoder_mark VIRAT_offset0_padding0_hidden_all_y_plane_only.avif VIRAT_offset0_padding0_hidden_all_y_plane_only.yuv > ~/paper/decode.txt
 ```
 
-# 介紹
-可以自行打開或關閉程式碼來測試不同的項目
-目前資料還沒從外部資料讀取，先固定4bit不停repeat
+在上述範例中，編碼結果會輸出為 `.avif` 檔案，並將編碼過程中的資訊記錄至 `encode.txt`。  
+解碼後的 YUV 影片會輸出為指定檔案，解碼與資料擷取資訊則記錄至 `decode.txt`。
+
+In this example, the encoded result is saved as an `.avif` file, while encoding logs are redirected to `encode.txt`.  
+The decoded YUV file is generated after decoding, and decoding or extraction logs are redirected to `decode.txt`.
+
+---
+
+## 5. Data Hiding Methods / 資料隱藏方法
+
+### 5.1 Angle-based Data Hiding / 幀內預測角度資料隱藏
+
+Angle-based data hiding embeds information by modifying or selecting specific intra prediction angle-related coding decisions in AV1.
+
+本方法利用 AV1 幀內預測中的角度模式資訊進行資料嵌入。  
+由於幀內預測模式會影響像素預測方向，因此此方法需要考量下列因素：
+
+- 嵌入資料後的影像品質變化
+- 預測角度修改後造成的失真
+- 不同區塊大小下的穩定性
+- 不同 bitrate 下的可嵌入容量與錯誤率
+- 解碼端是否能穩定還原嵌入資料
+
+相關程式碼位置如下：
+
+| Process | File |
+|---|---|
+| Encoder embedding | `encodeframe_utils.c` |
+| Decoder extraction | `decodemv.c` |
+
+---
+
+### 5.2 Coefficient-based Data Hiding / 係數資料隱藏
+
+Coefficient-based data hiding embeds information by modifying selected transform coefficient-related information after quantization.
+
+本方法主要針對 AV1 量化後的轉換係數進行資料嵌入。  
+由於係數會直接影響重建影像品質，因此需要特別注意嵌入位置與條件控制。
+
+可測試的實驗條件包含：
+
+- 量化參數條件
+- 掃描位置選擇
+- 區塊條件限制
+- 嵌入密度控制
+- non-zero AC coefficient ratio 條件
+- 不同 bitrate 下的穩定性
+- 不同影片內容下的影像品質與容量變化
+
+相關程式碼位置如下：
+
+| Process | File |
+|---|---|
+| Encoder embedding | `encodemb.c` |
+| Decoder extraction | `decodeframe.c` |
+
+---
+
+## 6. Experimental Control / 實驗控制方式
+
+目前可透過手動開啟或關閉程式碼中的條件來測試不同實驗項目。
+
+The experimental conditions can currently be controlled by manually enabling or disabling specific parts of the source code.
+
+建議測試項目包含：
+
+| Item | Description |
+|---|---|
+| Q condition | 測試不同量化條件下的嵌入效果 |
+| Scan position | 測試不同係數掃描位置的穩定性 |
+| Block condition | 測試不同區塊條件限制 |
+| Embedding density | 控制每個區塊或每個 frame 的嵌入量 |
+| Non-zero AC ratio | 限制非零 AC 係數比例，以降低影像失真 |
+| Bitrate | 比較不同 bitrate 下的影像品質與嵌入穩定性 |
+| Video content | 比較不同影片內容對資料隱藏效果的影響 |
+
+---
+
+## 7. Current Limitations / 目前限制
+
+目前版本仍屬於研究與實驗階段，具有以下限制：
+
+1. 嵌入資料尚未從外部檔案讀取。
+2. 目前先使用固定 4-bit 資料重複嵌入。
+3. 實驗條件主要透過手動修改程式碼控制。
+4. 尚未加入完整的錯誤更正碼機制。
+5. 不同影片、bitrate 與區塊條件下，嵌入穩定性仍需進一步分析。
+
+The current implementation is still in the experimental stage and has the following limitations:
+
+1. The payload is not yet read from an external file.
+2. A fixed 4-bit payload is repeatedly embedded.
+3. Experimental conditions are mainly controlled by manually modifying the source code.
+4. Error correction coding has not yet been fully integrated.
+5. Embedding stability under different videos, bitrates, and block conditions requires further evaluation.
+
+---
+
+## 8. Notes / 注意事項
+
+- 請確認輸入 YUV 影片解析度與指令中的 height、width 一致。
+- 請確認輸入影片格式為 raw YUV。
+- 建議將 encoding 與 decoding log 輸出成文字檔，方便後續分析。
+- 不同 bitrate 可能會影響嵌入容量、影像品質與資料擷取正確率。
+- 若修改 angle mode 或 coefficient value，應同時確認解碼端是否能使用相同規則擷取資料。
+
+Please make sure that the input YUV resolution matches the specified height and width.  
+It is also recommended to save encoding and decoding logs for further analysis.
+
+---
+
+## 9. Research Purpose / 研究目的
+
+本專案主要用於 AV1 編碼器中資料隱藏方法之研究，目標包含：
+
+- 提升資料嵌入穩定性
+- 降低嵌入後造成的影像品質損失
+- 分析不同嵌入條件對 bitrate、PSNR、SSIM、VMAF 與 BD-rate 的影響
+- 比較 angle-based 與 coefficient-based data hiding 的特性
+- 建立適合 AV1 編碼架構的資料隱藏方法
+
+The purpose of this project is to investigate data hiding methods in the AV1 encoder.  
+The main research objectives include improving embedding stability, reducing visual distortion, analyzing rate-distortion performance, and comparing different embedding strategies under the AV1 coding structure.
+
+---
+
+## 10. Related Source Files / 相關程式碼檔案
+
+| Method | Encoder File | Decoder File |
+|---|---|---|
+| Angle-based data hiding | `encodeframe_utils.c` | `decodemv.c` |
+| Coefficient-based data hiding | `encodemb.c` | `decodeframe.c` |
+
+---
+
+## 11. Suggested Future Work / 未來改進方向
+
+未來可進一步加入以下功能：
+
+1. 從外部檔案讀取欲嵌入資料。
+2. 加入 payload 長度、header 或同步資訊。
+3. 加入錯誤更正碼，提高解碼端資料擷取穩定性。
+4. 自動化實驗參數設定，減少手動修改程式碼。
+5. 輸出嵌入容量、錯誤率與影像品質分析結果。
+6. 支援不同嵌入策略之快速切換。
+7. 建立完整的實驗腳本，用於多影片、多 bitrate 與多條件測試。
+
+Possible future improvements include reading payloads from external files, adding error correction codes, automating experimental parameters, and providing complete evaluation scripts for multiple videos, bitrates, and embedding conditions.
 
 
-angle hide
-encode embed file - encodeframe_utils.c
-decode embed file - decodemv.c
-
-coeff hide
-encode embed file - encodemb.c
-decode embed file - decodeframe.c
+## 12. 相關參考
+1. https://arxiv.org/pdf/2008.06091
+2. https://github.com/av1stego/aom
+3. https://media.xiph.org/video/derf/
