@@ -226,6 +226,7 @@ int main(int argc, char **argv) {
   cfg.g_timebase.den = info.time_base.denominator;
   cfg.rc_target_bitrate = bitrate;
   cfg.g_error_resilient = (aom_codec_er_flags_t)strtoul(argv[7], NULL, 0);
+  cfg.g_threads = 1;
 
   writer = aom_video_writer_open(outfile_arg, kContainerIVF, &info);
   if (!writer) die("Failed to open %s for writing.", outfile_arg);

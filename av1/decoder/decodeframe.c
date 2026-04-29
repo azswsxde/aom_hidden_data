@@ -170,39 +170,84 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
                                            int stride, int reduced_tx_set, const AV1_COMMON *const cm, const MB_MODE_INFO *mbmi, aom_reader *const r) {
   tran_low_t *const dqcoeff = dcb->dqcoeff_block[plane] + dcb->cb_offset[plane];
   tran_low_t *mark_dqcoeff = dcb->dqcoeff_block[plane] + dcb->cb_offset[plane];
-  const BLOCK_SIZE bsize = mbmi->bsize;
-  const int use_angle_delta = av1_use_angle_delta(bsize);
 
   eob_info *eob_data = dcb->eob_data[plane] + dcb->txb_offset[plane];
   uint16_t scan_line = eob_data->max_scan_line;
   uint16_t eob = eob_data->eob;
 
-  if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
-    if (plane == 0 /* y plane*/)
+  int log_scale = av1_get_tx_scale(tx_size);
+  MACROBLOCKD *const xd = &dcb->xd;
+  const int16_t dequant = xd->plane[plane].seg_dequant_QTX[mbmi->segment_id][1]; //AC dequant
+  //if (eob > 1)
+  if (eob > 16)
+  {
+    if (log_scale == 0 || (log_scale == 1 && dequant % 2 == 0))
     {
       const SCAN_ORDER *const scan_order = get_scan(tx_size, tx_type);
-      MACROBLOCKD *const xd = &dcb->xd;
-      struct macroblockd_plane *const pd = &xd->plane[plane];
-      MB_MODE_INFO *const mbmi = xd->mi[0];
-
-      const int16_t dequant = xd->plane[plane].seg_dequant_QTX[mbmi->segment_id][1]; //AC dequant
+      struct macroblockd_plane *const pd = &xd->plane[plane];    
+      tran_low_t qcoeff = 0;
+      size_t abs_ac_qcoeff;
+      bool mark_check = false;
+      int eob_hidden_count = 0;
+      int nz_ac = 0;
       // Skip idx = 0, DC
-      for (int idx = 1; idx < eob; ++idx)
+      for (int idx = eob -1 ; idx > 1; idx--)
       {
-        tran_low_t const qcoeff = mark_dqcoeff[scan_order->scan[idx]] / (int)dequant;
-        size_t abs_ac_qcoeff = abs(mark_dqcoeff[scan_order->scan[idx]]) / (int)dequant;
+        if (mark_dqcoeff[scan_order->scan[idx]] != 0)
+          nz_ac++;
+      }
 
-        //printf("dqcoeff %d, dequant%d, qcoeff %d, hide_value %d, ", mark_dqcoeff[scan_order->scan[idx]], (int)dequant, qcoeff, (abs_ac_qcoeff % 2));
-        if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 15)
+      float ratio = (float)nz_ac / eob;
+      //////////////////////////////
+      ///     hide index check
+      //////////////////////////////
+      int idx_check = eob/2;
+      //int idx_check = eob*2/3;
+      //int idx_check = eob*3/4;
+      for (int idx = eob -1 ; idx > 1; idx--)
+      {
+        if (idx < idx_check)
+          break;
+        //////////////////////////////
+        ///     nonzero ac ratio
+        //////////////////////////////
+        if (ratio < 0.3)
+        //if (ratio < 0.4)
+        //if (ratio < 0.5)
+          break;
+        int shift_dqcoeff = abs(mark_dqcoeff[scan_order->scan[idx]]) << log_scale;
+        if (mark_dqcoeff[scan_order->scan[idx]] != 0 && (shift_dqcoeff % dequant == 0))
         {
-          count++;
-          printf("dqcoeff %d, dequant%d, qcoeff %d, hide_value %d, ", mark_dqcoeff[scan_order->scan[idx]], (int)dequant, qcoeff, (abs_ac_qcoeff % 2));
-          printf("count %d\n", count);
+          abs_ac_qcoeff = shift_dqcoeff / dequant;
+          //////////////////////////////
+          ///      ac safe range
+          //////////////////////////////
+          if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 5)
+          //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 6)
+          //if (abs_ac_qcoeff > 3 && abs_ac_qcoeff < 7)
+          {
+            mark_check = true;
+            count++;
+            printf("eob %d, idx %d: %d, %d : %d", eob, idx, mark_dqcoeff[scan_order->scan[idx]], abs_ac_qcoeff,(abs_ac_qcoeff % 2));
+
+            eob_hidden_count++;
+            /////////////////////////////////
+            ///  hide data amount / per block
+            /////////////////////////////////
+            if (eob_hidden_count == 1)
+            //if (eob_hidden_count == 2)
+            //if (eob_hidden_count == 3)
+              break;
+          }
         }
-        /*else
-          printf("\n");*/
+      }
+      if (mark_check)
+      {
+        printf("\n");
+        printf("dequant_ac %d eob %d hidden_bits_count %d\n",dequant, eob, count);
       }
     }
+  }
 
   av1_inverse_transform_block(&dcb->xd, dqcoeff, plane, tx_type, tx_size, dst,
                               stride, eob, reduced_tx_set);
@@ -275,11 +320,18 @@ static inline void predict_and_reconstruct_intra_block(
                                               reduced_tx_set_used);
       struct macroblockd_plane *const pd = &xd->plane[plane];
       uint8_t *dst = &pd->dst.buf[(row * pd->dst.stride + col) << MI_SIZE_LOG2];      
-
-      if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME))
+#if 0
+      if (  (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+         && plane == AOM_PLANE_Y
+         && av1_is_directional_mode(mbmi->mode)
+         && av1_use_angle_delta(mbmi->bsize)
+         )
         inverse_transform_block_(dcb, plane, tx_type, tx_size, dst, pd->dst.stride, reduced_tx_set_used, cm, mbmi, r);
       else
         inverse_transform_block(dcb, plane, tx_type, tx_size, dst, pd->dst.stride, reduced_tx_set_used);
+#else
+      inverse_transform_block(dcb, plane, tx_type, tx_size, dst, pd->dst.stride, reduced_tx_set_used);
+#endif      
     }
   }
   if (plane == AOM_PLANE_Y && store_cfl_required(cm, xd)) {

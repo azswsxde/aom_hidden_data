@@ -895,7 +895,7 @@ static void read_intra_frame_mode_info(AV1_COMMON *const cm,
 
   if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
   {
-#if 0
+#if 1
     if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) && !got_end_keyword)
     {
       //printf("frame type %d mi_row %d, mi_col %d ",cm->current_frame.frame_type, mi_row, mi_col);
@@ -903,8 +903,9 @@ static void read_intra_frame_mode_info(AV1_COMMON *const cm,
     }
     else
        read_angle_delta(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED]);
-#endif
+#else
     read_angle_delta(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED]);
+#endif    
   }
   else mbmi->angle_delta[PLANE_TYPE_Y] = 0;
 
@@ -1166,7 +1167,7 @@ static void read_intra_block_mode_info(AV1_COMMON *const cm,
 
   if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
   {
-#if 0
+#if 1
     if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) && !got_end_keyword)
     {
       printf("frame type %d ",cm->current_frame.frame_type);
@@ -1174,8 +1175,9 @@ static void read_intra_block_mode_info(AV1_COMMON *const cm,
     }
     else
        read_angle_delta(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED]);
-#endif
+#else
     read_angle_delta(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED]);
+#endif
   }
   else mbmi->angle_delta[PLANE_TYPE_Y] = 0;
 
