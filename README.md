@@ -17,10 +17,9 @@ The main objective is to embed hidden information by modifying selected coding s
 2. **Coefficient-based data hiding**  
    透過 AV1 量化後係數或掃描位置相關資訊進行資料嵌入。
 
-目前資料嵌入內容尚未由外部檔案讀取，而是先以固定的 4-bit 資料不斷重複嵌入，方便進行實驗測試與穩定性分析。
+目前資料嵌入內容已支援由外部二進位檔案 `data.bin` 讀取。
 
-At the current stage, the embedded payload is not read from an external file.  
-Instead, a fixed 4-bit payload is repeatedly embedded for experimental evaluation and stability testing.
+During encoding, the encoder reads the hidden payload from an external binary file named `data.bin`, and embeds the payload into the AV1 bitstream according to the selected data hiding method.
 
 ---
 
@@ -73,6 +72,31 @@ Replace `path/to/aom_hidden_data` with the actual path of this project.
 | `0` | 起始幀或 offset 參數 |
 | `total_frame` | 編碼總幀數 |
 | `bitrate` | 目標位元率 |
+
+#### Hidden Payload File / 隱藏資料檔案
+
+Before running the encoder, prepare a binary payload file named `data.bin`.
+
+The encoder reads the hidden payload from `data.bin` during encoding. After the file content is loaded, the encoder automatically appends `NCU` to the end of the payload as an ending symbol. Therefore, users only need to prepare the original payload content in `data.bin`; the ending symbol does not need to be manually added.
+
+編碼前請先準備一個名為 `data.bin` 的二進位檔案。
+
+編碼器會在 encoding 過程中讀取 `data.bin` 作為欲嵌入的隱藏資料。讀取檔案內容後，encoder 會自動在 payload 最後加入 `NCU` 作為資料結束符號。因此，使用者只需要將原始欲嵌入資料放入 `data.bin`，不需要手動在檔案尾端加入結束符號。
+
+`data.bin` should be placed in the working directory where `simple_encoder_mark` is executed, unless another path is configured in the source code.
+
+`data.bin` 應放在執行 `simple_encoder_mark` 的工作目錄下，除非程式碼中有另外指定其他讀取路徑。
+
+Example:
+
+```bash
+echo -n "hidden message" > data.bin
+./simple_encoder_mark av1 1280 720 input.yuv output.avif 30 0 150 8192
+```
+
+In this example, the encoder reads the content of `data.bin`, automatically appends `NCU` after `hidden message`, and embeds the resulting payload during AV1 encoding.
+
+在此範例中，encoder 會讀取 `data.bin` 中的 `hidden message`，接著自動在資料最後加入 `NCU`，並將完整 payload 嵌入至 AV1 編碼流程中。
 
 ---
 

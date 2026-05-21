@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
 
   if (argc != 10) die("Invalid number of arguments");
 
-  if (hidden_data_init("random_150000_bits.bin") != 0) {
+  if (hidden_data_init("data.bin") != 0) {
     die("Failed to load hidden data.");
   }
 
