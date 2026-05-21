@@ -846,6 +846,9 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
           nz_ac++;
       }
       float ratio = (float)nz_ac / eob;
+      //////////////////////////////
+      ///     hide index check
+      //////////////////////////////
       int idx_check = eob/2;
       //int idx_check = eob*2/3;
       //int idx_check = eob*3/4;
@@ -856,6 +859,10 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
         }
         if (idx < idx_check)
           break;
+
+        //////////////////////////////
+        ///     nonzero ac ratio
+        //////////////////////////////
         if (ratio < 0.3)
         //if (ratio < 0.4)
         //if (ratio < 0.5)
@@ -866,6 +873,10 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
         {
           //abs_ac_qcoeff = abs(mark_dqcoeff[scan_order->scan[idx]] / p->dequant_QTX[1]);
           abs_ac_qcoeff = abs(mark_qcoeff[scan_order->scan[idx]]);
+
+          //////////////////////////////
+          ///      ac safe range
+          //////////////////////////////
           if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 5)
           //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 6)
           //if (abs_ac_qcoeff > 3 && abs_ac_qcoeff < 7)
@@ -913,6 +924,10 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
                hidden_data_get_bit_index(),
                hidden_data_get_total_bits());
             eob_hidden_count++;
+
+            /////////////////////////////////
+            ///  hide data amount / per block
+            /////////////////////////////////
             if (eob_hidden_count == 1)
             //if (eob_hidden_count == 2)
             //if (eob_hidden_count == 3)
