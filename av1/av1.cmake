@@ -90,7 +90,9 @@ list(APPEND AOM_AV1_COMMON_SOURCES
             "${AOM_ROOT}/av1/common/txb_common.c"
             "${AOM_ROOT}/av1/common/txb_common.h"
             "${AOM_ROOT}/av1/common/warped_motion.c"
-            "${AOM_ROOT}/av1/common/warped_motion.h")
+            "${AOM_ROOT}/av1/common/warped_motion.h"
+            "${AOM_ROOT}/av1/common/hidden_data_manager.c"
+            "${AOM_ROOT}/av1/common/hidden_data_manager.h")
 
 list(APPEND AOM_AV1_DECODER_SOURCES
             "${AOM_ROOT}/av1/av1_dx_iface.c"

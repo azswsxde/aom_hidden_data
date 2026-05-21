@@ -34,6 +34,7 @@
 #include "av1/encoder/txb_rdopt.h"
 #include "av1/encoder/rd.h"
 #include "av1/encoder/rdopt.h"
+#include "av1/common/hidden_data_manager.h"
 
 void av1_subtract_block(BitDepthInfo bd_info, int rows, int cols, int16_t *diff,
                         ptrdiff_t diff_stride, const uint8_t *src8,
@@ -817,6 +818,118 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
                                 dst_stride, *eob,
                                 cm->features.reduced_tx_set_used);
 #if 0
+    // hide data from file
+    int log_scale = av1_get_tx_scale(tx_size);
+    if ( av1_is_directional_mode(mbmi->mode)
+       && av1_use_angle_delta(mbmi->bsize)
+       && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+       && plane == AOM_PLANE_Y
+       && args->dry_run == OUTPUT_ENABLED
+       && *eob > 16
+       && (log_scale == 0 || (log_scale == 1 && p->dequant_QTX[1] % 2 == 0))
+       && hidden_data_has_next_bit()
+       )
+    {
+      int32_t *mark_qcoeff  = p->qcoeff + BLOCK_OFFSET(block);
+      tran_low_t *mark_dqcoeff = p->dqcoeff + BLOCK_OFFSET(block);
+      int embed_success = 0;
+      uint16_t eob = p->eobs[block];
+      int hidden_value = 0;
+      int nz_ac = 0;
+      tran_low_t dqcoeff_temp;
+      size_t abs_ac_qcoeff;
+      bool mark_check = false;
+      int eob_hidden_count = 0;
+      for (int idx = eob -1 ; idx > 1; idx--)
+      {
+        if (mark_dqcoeff[scan_order->scan[idx]] != 0)
+          nz_ac++;
+      }
+      float ratio = (float)nz_ac / eob;
+      int idx_check = eob/2;
+      //int idx_check = eob*2/3;
+      //int idx_check = eob*3/4;
+      for (int idx = eob -1 ; idx > 1; idx--)
+      {
+        if (!hidden_data_has_next_bit()) {
+          break;
+        }
+        if (idx < idx_check)
+          break;
+        if (ratio < 0.3)
+        //if (ratio < 0.4)
+        //if (ratio < 0.5)
+          break;
+        int shift_dqcoeff = mark_dqcoeff[scan_order->scan[idx]] << log_scale;
+        // Skip BR HR
+        if (mark_dqcoeff[scan_order->scan[idx]] != 0 && (shift_dqcoeff % p->dequant_QTX[1] == 0))
+        {
+          //abs_ac_qcoeff = abs(mark_dqcoeff[scan_order->scan[idx]] / p->dequant_QTX[1]);
+          abs_ac_qcoeff = abs(mark_qcoeff[scan_order->scan[idx]]);
+          if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 5)
+          //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 6)
+          //if (abs_ac_qcoeff > 3 && abs_ac_qcoeff < 7)
+          {
+            hidden_value = hidden_data_peek_bit();
+            if (abs_ac_qcoeff < 4)
+            {
+              if (hidden_value != (abs_ac_qcoeff % 2))
+              {
+                if (mark_qcoeff[scan_order->scan[idx]] > 0)
+                {
+                  mark_qcoeff[scan_order->scan[idx]]++;
+                }
+                else 
+                {
+                  mark_qcoeff[scan_order->scan[idx]]--;
+                }
+                mark_dqcoeff[scan_order->scan[idx]] = (mark_qcoeff[scan_order->scan[idx]] * p->dequant_QTX[1]) >> log_scale;
+              }
+            }
+            else
+            {
+              if (hidden_value != (abs_ac_qcoeff % 2))
+              {
+                if (mark_qcoeff[scan_order->scan[idx]] > 0)
+                {
+                  mark_qcoeff[scan_order->scan[idx]]--;
+                }
+                else 
+                {
+                  mark_qcoeff[scan_order->scan[idx]]++;
+                }
+                mark_dqcoeff[scan_order->scan[idx]] = (mark_qcoeff[scan_order->scan[idx]] * p->dequant_QTX[1]) >> log_scale;
+              }
+            }
+            mark_check = true;
+            hidden_data_commit_bit();
+            printf("[COEF_HIDE] eob %d, idx %d, dqcoeff %d, qcoeff %d, "
+               "embedded %d, bit_index %zu / %zu\n",
+               eob,
+               idx,
+               mark_dqcoeff[scan_order->scan[idx]],
+               mark_qcoeff[scan_order->scan[idx]],
+               hidden_value,
+               hidden_data_get_bit_index(),
+               hidden_data_get_total_bits());
+            eob_hidden_count++;
+            if (eob_hidden_count == 1)
+            //if (eob_hidden_count == 2)
+            //if (eob_hidden_count == 3)
+              break;
+          }
+        }
+      }
+      
+      /*if (mark_check) {
+        printf("dequant_ac %d, eob %d\n",
+              p->dequant_QTX[1],
+              eob);
+      }*/
+    }
+#endif
+#if 0
+    //old method
     int log_scale = av1_get_tx_scale(tx_size);
     if ( av1_is_directional_mode(mbmi->mode)
        && av1_use_angle_delta(mbmi->bsize)

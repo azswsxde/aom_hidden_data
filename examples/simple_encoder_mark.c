@@ -103,6 +103,7 @@
 #include "aom/aomcx.h"
 #include "common/tools_common.h"
 #include "common/video_writer.h"
+#include "av1/common/hidden_data_manager.h"
 
 static const char *exec_name;
 
@@ -182,6 +183,10 @@ int main(int argc, char **argv) {
   memset(&info, 0, sizeof(info));
 
   if (argc != 10) die("Invalid number of arguments");
+
+  if (hidden_data_init("random_150000_bits.bin") != 0) {
+    die("Failed to load hidden data.");
+  }
 
   codec_arg = argv[1]; // only av1
   width_arg = argv[2];
@@ -263,6 +268,8 @@ int main(int argc, char **argv) {
   if (aom_codec_destroy(&codec)) die_codec(&codec, "Failed to destroy codec.");
 
   aom_video_writer_close(writer);
+
+  hidden_data_free();
 
   return EXIT_SUCCESS;
 }

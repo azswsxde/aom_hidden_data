@@ -24,6 +24,8 @@
 
 #include <time.h>
 #include "av1/encoder/intra_mode_search.h"
+#include "av1/common/hidden_data_manager.h"
+
 void av1_set_ssim_rdmult(const AV1_COMP *const cpi, int *errorperbit,
                          const BLOCK_SIZE bsize, const int mi_row,
                          const int mi_col, int *const rdmult) {
@@ -175,6 +177,7 @@ static inline void copy_mbmi_ext_frame_to_mbmi_ext(
          sizeof(mbmi_ext->global_mvs));
 }
 
+#if 0 //hide data fixed
 static int hidden_data[] = { 0, 0, 1, 1 };
 static short hidden_values = 4;
 static int message_size = 238604;
@@ -185,9 +188,7 @@ static short end_keyword_value = 24;
 static int current_value_index = 0;
 static short current_keyword_index = 0;
 static int hidden_bits_count = 0;
-// include End Keyord
-//static const int max_message_size = 238604;
-static const int max_message_size = 999999;
+#endif
 
 void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
                       const PICK_MODE_CONTEXT *const ctx, int mi_row,
@@ -218,21 +219,183 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
   // 中文：當 angle_delta 已達上限（3）時無法再加 1 嵌入資料，避免越界 ; ENG: Skip blocks where angle_delta is already 3, since adding 1 would exceed legal range
   // 中文：排除 dry run 模式，dry run 僅模擬流程不應實際寫入資料 ; ENG: Exclude dry run mode to avoid embedding data during simulation
   // 中文：僅在純內部預測畫面（keyframe 或 intra-only）進行嵌入，避免與 inter 預測干擾 ; ENG: Restrict embedding to intra-coded frames (keyframe or intra-only) to prevent interference with inter prediction
+  
 #if 0
+  //hide data from file
+  #if 0
   if (  av1_is_directional_mode(mi->mode)
-     && av1_use_angle_delta(mi->bsize)
-     && DoHiddingData
-     && mi->angle_delta[PLANE_TYPE_Y] < 3
-     //&& mi->angle_delta[PLANE_TYPE_Y] != 0 //optional
-     && !dry_run
-     && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
-     && (message_size + end_keyword_value) <= max_message_size
-     && hidden_bits_count < (message_size + end_keyword_value)
-     )
+    && av1_use_angle_delta(mi->bsize)
+    && DoHiddingData
+    && mi->angle_delta[PLANE_TYPE_Y] < 3
+    //&& mi->angle_delta[PLANE_TYPE_Y] != 0 //optional
+    && !dry_run
+    && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+    && hidden_data_has_next_bit()
+    )
   {
     ///////////////////////////////
     // basic odd even way no 6 (catania way)
     ///////////////////////////////
+    int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
+    int written_angle = abs_angle;
+    int hidden_value = hidden_data_peek_bit();
+    int embed_success = 0;
+    if (hidden_value == 0) {
+      if (abs_angle % 2 == 1) {
+        written_angle = abs_angle - 1;
+      }
+    } else {
+      if (abs_angle % 2 == 0) {
+        written_angle = abs_angle + 1;
+      }
+    }
+    mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
+    embed_success = 1;
+    if (embed_success) {
+      hidden_data_commit_bit();
+    }
+    printf("[ANGLE_HIDE] embedded %d, written_angle %d, bit_index %zu / %zu, "
+        "payload_bits %zu, end_bits %zu\n",
+        hidden_value,
+        written_angle,
+        hidden_data_get_bit_index(),
+        hidden_data_get_total_bits(),
+        hidden_data_get_payload_bits(),
+        hidden_data_get_end_keyword_bits());
+  }
+  #endif
+  #if 0
+  ///////////////////////////////
+  // basic odd even way with 6 and choose rd 
+  ///////////////////////////////
+  if (  av1_is_directional_mode(mi->mode)
+     && av1_use_angle_delta(mi->bsize)
+     && DoHiddingData
+     && mi->angle_delta[PLANE_TYPE_Y] < 4
+     && !dry_run
+     && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+     && hidden_data_has_next_bit()
+     )
+  {
+    int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
+    int written_angle = abs_angle;
+    int hidden_value = hidden_data_peek_bit();
+    int embed_success = 0;
+    int sub_angle = (abs_angle / 2) * 2;
+    int64_t rd_plus = -1, rd_minus= -1;
+    if (abs_angle != 6)
+      rd_plus = av1_test_intra_angle_delta_model(cpi, x, mi->bsize, mi->mode, mi->angle_delta[PLANE_TYPE_Y] + 1, 1);
+    if (abs_angle != 0)
+      rd_minus = av1_test_intra_angle_delta_model(cpi, x, mi->bsize, mi->mode, mi->angle_delta[PLANE_TYPE_Y] - 1, 1);
+
+    printf("[HIDE] rd_plus: %6d, rd_minus: %6d, ",rd_plus,rd_minus);
+    bool use_rd_plus = true;
+
+    if (rd_plus < 0 || (rd_minus < rd_plus && rd_minus > -1)) //越小越好但-1是另外
+      use_rd_plus = false;
+
+    if (hidden_value == 1)
+      {
+        if (abs_angle % 2 == 0)
+          if (use_rd_plus)
+            written_angle = abs_angle + 1;
+          else
+            written_angle = abs_angle - 1;
+      }
+      else
+      {
+        if (abs_angle % 2 == 1)
+          if (use_rd_plus)
+            written_angle = abs_angle + 1;
+          else
+            written_angle = abs_angle - 1;
+      }
+    mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
+    embed_success = 1;
+    if (embed_success) {
+      hidden_data_commit_bit();
+    }
+    printf("[ANGLE_HIDE] embedded %d, written_angle %d, bit_index %zu / %zu, "
+         "payload_bits %zu, end_bits %zu\n",
+         hidden_value,
+         written_angle,
+         hidden_data_get_bit_index(),
+         hidden_data_get_total_bits(),
+         hidden_data_get_payload_bits(),
+         hidden_data_get_end_keyword_bits());
+  }
+  #endif
+  #if 0
+  ///////////////////////////////
+  // Converge toward angle 3.
+  ///////////////////////////////
+  if (  av1_is_directional_mode(mi->mode)
+     && av1_use_angle_delta(mi->bsize)
+     && DoHiddingData
+     && mi->angle_delta[PLANE_TYPE_Y] < 4
+     && mi->angle_delta[PLANE_TYPE_Y] != 0 //optional
+     && !dry_run
+     && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+     && hidden_data_has_next_bit()
+     )
+  {
+    int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
+    int written_angle = abs_angle;
+    int hidden_value = hidden_data_peek_bit();
+    int embed_success = 0;
+    int sub_angle = (abs_angle / 2) * 2;
+
+    if (hidden_value == 1)
+    {
+      if (abs_angle % 2 == 0) 
+      {
+        if (abs_angle > 3)
+          written_angle = 5;
+        else
+          written_angle = 1;
+      }
+    }
+    else
+    {
+      if (abs_angle % 2 == 1)
+      {
+        if (abs_angle > 3)
+          written_angle = 4;
+        else
+          written_angle = 2;
+      }
+    }
+    mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
+    embed_success = 1;
+    if (embed_success) {
+      hidden_data_commit_bit();
+    }
+    printf("[ANGLE_HIDE] embedded %d, written_angle %d, bit_index %zu / %zu, "
+         "payload_bits %zu, end_bits %zu\n",
+         hidden_value,
+         written_angle,
+         hidden_data_get_bit_index(),
+         hidden_data_get_total_bits(),
+         hidden_data_get_payload_bits(),
+         hidden_data_get_end_keyword_bits());
+  }
+  #endif
+#else //hide data fixed
+  #if 0
+  ///////////////////////////////
+  // basic odd even way no 6 (catania way)
+  ///////////////////////////////
+  if (  av1_is_directional_mode(mi->mode)
+    && av1_use_angle_delta(mi->bsize)
+    && DoHiddingData
+    && mi->angle_delta[PLANE_TYPE_Y] < 3
+    //&& mi->angle_delta[PLANE_TYPE_Y] != 0 //optional
+    && !dry_run
+    && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+    && (message_size + end_keyword_value) <= max_message_size
+    && hidden_bits_count < (message_size + end_keyword_value)
+    )
+  {
     int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
     int written_angle = abs_angle;
     int hidden_value = 0;
@@ -275,8 +438,8 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
     mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
     printf(" frame type %d, angle_delta %d, abs_angle: %d, embedded: %d → written: %d, total_bits: %d, bsize %d, hidden_bits_count %d\n",cm->current_frame.frame_type, mi->angle_delta[PLANE_TYPE_Y], abs_angle, hidden_value, written_angle, hidden_bits_count, mi->bsize, hidden_bits_count);
   }
-#endif
-#if 0
+  #endif
+  #if 0
   ///////////////////////////////
   // basic odd even way with 6 and choose rd 
   ///////////////////////////////
@@ -353,22 +516,8 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
     mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
     printf(" frame type %d, ori_angle_delta: %d, embedded: %d → new_angle_delta: %d, total_bits: %d, bsize %d, hidden_bits_count %d\n",cm->current_frame.frame_type, abs_angle, hidden_value, written_angle, hidden_bits_count, mi->bsize, hidden_bits_count);
   }
-#endif
-#if 0
-    if (  av1_is_directional_mode(mi->mode)
-     && av1_use_angle_delta(mi->bsize)
-     && DoHiddingData
-     && mi->angle_delta[PLANE_TYPE_Y] < 3
-     //&& mi->angle_delta[PLANE_TYPE_Y] != 0 //optional
-     && !dry_run
-     && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
-     && (message_size + end_keyword_value) <= max_message_size
-     && hidden_bits_count < (message_size + end_keyword_value)
-     )
-  {
-  }
-#endif
-#if 0
+  #endif
+  #if 0
   ///////////////////////////////
   // Converge toward angle 3.
   ///////////////////////////////
@@ -444,6 +593,7 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
     mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
     printf(" frame type %d, ori_angle_delta: %d, embedded: %d → new_angle_delta: %d, total_bits: %d, bsize %d, hidden_bits_count %d\n",cm->current_frame.frame_type, abs_angle, hidden_value, written_angle, hidden_bits_count, mi->bsize, hidden_bits_count);
   }
+  #endif
 #endif
 
   *mi_addr = *mi;

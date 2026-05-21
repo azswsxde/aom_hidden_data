@@ -63,6 +63,7 @@
 #include "av1/common/thread_common.h"
 #include "av1/common/tile_common.h"
 #include "av1/common/warped_motion.h"
+#include "av1/common/hidden_data_manager.h"
 
 #include "av1/decoder/decodeframe.h"
 #include "av1/decoder/decodemv.h"
@@ -226,9 +227,18 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
           //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 6)
           //if (abs_ac_qcoeff > 3 && abs_ac_qcoeff < 7)
           {
-            mark_check = true;
-            count++;
-            printf("eob %d, idx %d: %d, %d : %d", eob, idx, mark_dqcoeff[scan_order->scan[idx]], abs_ac_qcoeff,(abs_ac_qcoeff % 2));
+            if (!hidden_data_decode_got_end_keyword()) {
+              int injected_value = (abs_ac_qcoeff % 2);
+              int end_found = hidden_data_decode_push_bit(injected_value, HIDDEN_DATA_CARRIER_COEF);
+
+              printf("[COEF_READ] injected %d, total_bits %zu, "
+                    "payload_bits %zu, keyword_buffer %06X, end_found %d\n",
+                    injected_value,
+                    hidden_data_decode_get_total_bits(),
+                    hidden_data_decode_get_payload_bits(),
+                    hidden_data_decode_get_keyword_buffer(),
+                    end_found);
+            }
 
             eob_hidden_count++;
             /////////////////////////////////
@@ -240,11 +250,6 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
               break;
           }
         }
-      }
-      if (mark_check)
-      {
-        printf("\n");
-        printf("dequant_ac %d eob %d hidden_bits_count %d\n",dequant, eob, count);
       }
     }
   }
