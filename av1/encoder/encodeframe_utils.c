@@ -177,19 +177,16 @@ static inline void copy_mbmi_ext_frame_to_mbmi_ext(
          sizeof(mbmi_ext->global_mvs));
 }
 
-#if 0 //hide data fixed
 static int hidden_data[] = { 0, 0, 1, 1 };
 static short hidden_values = 4;
 static int message_size = 238604;
 //statuc int message_size = 299306 // with 6
-//static int message_size = 120;
 static int end_keyword_data[] = {0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 static short end_keyword_value = 24;
 static int current_value_index = 0;
 static short current_keyword_index = 0;
 static int hidden_bits_count = 0;
 static int max_message_size = 9999999;
-#endif
 
 void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
                       const PICK_MODE_CONTEXT *const ctx, int mi_row,
@@ -220,171 +217,9 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
   // 中文：當 angle_delta 已達上限（3）時無法再加 1 嵌入資料，避免越界 ; ENG: Skip blocks where angle_delta is already 3, since adding 1 would exceed legal range
   // 中文：排除 dry run 模式，dry run 僅模擬流程不應實際寫入資料 ; ENG: Exclude dry run mode to avoid embedding data during simulation
   // 中文：僅在純內部預測畫面（keyframe 或 intra-only）進行嵌入，避免與 inter 預測干擾 ; ENG: Restrict embedding to intra-coded frames (keyframe or intra-only) to prevent interference with inter prediction
-  
-#if 1
-  //hide data from file
-  #if 1
-  if (  av1_is_directional_mode(mi->mode)
-    && av1_use_angle_delta(mi->bsize)
-    && DoHiddingData
-    && mi->angle_delta[PLANE_TYPE_Y] < 3
-    //&& mi->angle_delta[PLANE_TYPE_Y] != 0 //optional
-    && !dry_run
-    && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
-    && hidden_data_has_next_bit()
-    )
-  {
-    ///////////////////////////////
-    // basic odd even way no 6 (catania way)
-    ///////////////////////////////
-    int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
-    int written_angle = abs_angle;
-    int hidden_value = hidden_data_peek_bit();
-    int embed_success = 0;
-    if (hidden_value == 0) {
-      if (abs_angle % 2 == 1) {
-        written_angle = abs_angle - 1;
-      }
-    } else {
-      if (abs_angle % 2 == 0) {
-        written_angle = abs_angle + 1;
-      }
-    }
-    mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
-    embed_success = 1;
-    if (embed_success) {
-      hidden_data_commit_bit();
-    }
-    printf("[ANGLE_HIDE] embedded %d, written_angle %d, bit_index %zu / %zu, "
-        "payload_bits %zu, end_bits %zu\n",
-        hidden_value,
-        written_angle,
-        hidden_data_get_bit_index(),
-        hidden_data_get_total_bits(),
-        hidden_data_get_payload_bits(),
-        hidden_data_get_end_keyword_bits());
-  }
-  #endif
   #if 0
   ///////////////////////////////
-  // basic odd even way with 6 and choose rd 
-  ///////////////////////////////
-  if (  av1_is_directional_mode(mi->mode)
-     && av1_use_angle_delta(mi->bsize)
-     && DoHiddingData
-     && mi->angle_delta[PLANE_TYPE_Y] < 4
-     && !dry_run
-     && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
-     && hidden_data_has_next_bit()
-     )
-  {
-    int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
-    int written_angle = abs_angle;
-    int hidden_value = hidden_data_peek_bit();
-    int embed_success = 0;
-    int sub_angle = (abs_angle / 2) * 2;
-    int64_t rd_plus = -1, rd_minus= -1;
-    if (abs_angle != 6)
-      rd_plus = av1_test_intra_angle_delta_model(cpi, x, mi->bsize, mi->mode, mi->angle_delta[PLANE_TYPE_Y] + 1, 1);
-    if (abs_angle != 0)
-      rd_minus = av1_test_intra_angle_delta_model(cpi, x, mi->bsize, mi->mode, mi->angle_delta[PLANE_TYPE_Y] - 1, 1);
-
-    printf("[HIDE] rd_plus: %6d, rd_minus: %6d, ",rd_plus,rd_minus);
-    bool use_rd_plus = true;
-
-    if (rd_plus < 0 || (rd_minus < rd_plus && rd_minus > -1)) //越小越好但-1是另外
-      use_rd_plus = false;
-
-    if (hidden_value == 1)
-      {
-        if (abs_angle % 2 == 0)
-          if (use_rd_plus)
-            written_angle = abs_angle + 1;
-          else
-            written_angle = abs_angle - 1;
-      }
-      else
-      {
-        if (abs_angle % 2 == 1)
-          if (use_rd_plus)
-            written_angle = abs_angle + 1;
-          else
-            written_angle = abs_angle - 1;
-      }
-    mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
-    embed_success = 1;
-    if (embed_success) {
-      hidden_data_commit_bit();
-    }
-    printf("[ANGLE_HIDE] embedded %d, written_angle %d, bit_index %zu / %zu, "
-         "payload_bits %zu, end_bits %zu\n",
-         hidden_value,
-         written_angle,
-         hidden_data_get_bit_index(),
-         hidden_data_get_total_bits(),
-         hidden_data_get_payload_bits(),
-         hidden_data_get_end_keyword_bits());
-  }
-  #endif
-  #if 0
-  ///////////////////////////////
-  // Converge toward angle 3.
-  ///////////////////////////////
-  if (  av1_is_directional_mode(mi->mode)
-     && av1_use_angle_delta(mi->bsize)
-     && DoHiddingData
-     && mi->angle_delta[PLANE_TYPE_Y] < 4
-     && mi->angle_delta[PLANE_TYPE_Y] != 0 //optional
-     && !dry_run
-     && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
-     && hidden_data_has_next_bit()
-     )
-  {
-    int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
-    int written_angle = abs_angle;
-    int hidden_value = hidden_data_peek_bit();
-    int embed_success = 0;
-    int sub_angle = (abs_angle / 2) * 2;
-
-    if (hidden_value == 1)
-    {
-      if (abs_angle % 2 == 0) 
-      {
-        if (abs_angle > 3)
-          written_angle = 5;
-        else
-          written_angle = 1;
-      }
-    }
-    else
-    {
-      if (abs_angle % 2 == 1)
-      {
-        if (abs_angle > 3)
-          written_angle = 4;
-        else
-          written_angle = 2;
-      }
-    }
-    mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
-    embed_success = 1;
-    if (embed_success) {
-      hidden_data_commit_bit();
-    }
-    printf("[ANGLE_HIDE] embedded %d, written_angle %d, bit_index %zu / %zu, "
-         "payload_bits %zu, end_bits %zu\n",
-         hidden_value,
-         written_angle,
-         hidden_data_get_bit_index(),
-         hidden_data_get_total_bits(),
-         hidden_data_get_payload_bits(),
-         hidden_data_get_end_keyword_bits());
-  }
-  #endif
-#else //hide data fixed
-  #if 0
-  ///////////////////////////////
-  // basic odd even way no 6 (catania way)
+  // basic odd even way no 6 (catania way)      use (without 7) in decode side
   ///////////////////////////////
   if (  av1_is_directional_mode(mi->mode)
     && av1_use_angle_delta(mi->bsize)
@@ -441,9 +276,19 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
   }
   #endif
   #if 0
+  // 中文：計算目前 angle_delta 對應到非負範圍的 abs_angle，方便用奇偶性表示嵌入位元 ; ENG: Convert current angle_delta to a non-negative abs_angle so its parity can represent the embedded bit
+  // 中文：預設 written_angle 等於原始角度，若目前角度奇偶性已符合欲嵌入位元，則不需要修改 ; ENG: Initialize written_angle as the original angle; no change is needed if its parity already matches the bit to embed
+  // 中文：分別重新測試 angle_delta +1 與 angle_delta -1 的 RD cost，用來判斷往哪個方向調整角度失真較小 ; ENG: Re-run RD cost evaluation for angle_delta +1 and angle_delta -1 to decide which adjustment direction causes less distortion
+  // 中文：若 abs_angle 已達最大值 6，不能再測試 +1，避免 angle_delta 超出合法範圍 ; ENG: Skip +1 RD test when abs_angle is already 6 to avoid exceeding the legal angle_delta range
+  // 中文：若 abs_angle 已達最小值 0，不能再測試 -1，避免 angle_delta 超出合法範圍 ; ENG: Skip -1 RD test when abs_angle is already 0 to avoid exceeding the legal angle_delta range
+  // 中文：比較 +1 與 -1 的 RD cost，選擇 cost 較小且有效的方向；-1 表示該方向不可用或未測試 ; ENG: Compare RD costs of +1 and -1 and choose the valid direction with smaller cost; -1 indicates unavailable or untested
+  // 中文：依照目前已嵌入位元數，決定要嵌入的是一般訊息資料或結束關鍵字資料 ; ENG: Decide whether to embed normal message data or end-keyword data according to the current hidden bit count
+  // 中文：使用 abs_angle 的奇偶性承載 bit：奇數代表 1，偶數代表 0 ; ENG: Use the parity of abs_angle to carry the bit: odd represents 1, even represents 0
+  // 中文：若目前角度奇偶性不符合欲嵌入 bit，則依 RD cost 較佳的方向將角度加 1 或減 1 ; ENG: If the current angle parity does not match the bit to embed, adjust the angle by +1 or -1 according to the better RD-cost direction
+  // 中文：將修改後的 written_angle 轉回 AV1 使用的 angle_delta 範圍並寫回 mi 結構 ; ENG: Convert the modified written_angle back to AV1 angle_delta range and write it back to the mi structure
   ///////////////////////////////
-  // basic odd even way with 6 and choose rd 
-  ///////////////////////////////
+  // basic odd even way with 6 and choose rd    use (with 7) in decode side
+  /////////////////////////////// 
   if (  av1_is_directional_mode(mi->mode)
      && av1_use_angle_delta(mi->bsize)
      && DoHiddingData
@@ -519,8 +364,17 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
   }
   #endif
   #if 0
+  // 中文：確認區塊使用方向性預測模式，僅此類模式可調整角度以嵌入資料 ; ENG: Check if the block uses directional intra prediction mode, which supports angle_delta for embedding
+  // 中文：確認此區塊尺寸支援 angle_delta，避免在不合法的區塊大小中嵌入資料 ; ENG: Ensure the block size supports angle_delta to avoid embedding in illegal block sizes
+  // 中文：僅在啟用資料嵌入階段時進行嵌入 ; ENG: Enable embedding only during the designated data-hiding phase
+  // 中文：排除 angle_delta 過大的情況，避免後續調整角度時超出合法範圍 ; ENG: Skip blocks with overly large angle_delta to avoid illegal angle adjustment later
+  // 中文：排除 angle_delta 等於 0 的情況，此條件為 optional，可避免使用中心對應位置進行嵌入 ; ENG: Optionally skip angle_delta equal to 0 to avoid embedding at the center-corresponding position
+  // 中文：排除 dry run 模式，dry run 僅模擬流程不應實際寫入資料 ; ENG: Exclude dry run mode to avoid embedding data during simulation
+  // 中文：僅在純內部預測畫面 keyframe 或 intra-only frame 進行嵌入，避免與 inter 預測干擾 ; ENG: Restrict embedding to intra-coded frames, either keyframe or intra-only frame, to prevent interference with inter prediction
+  // 中文：確認訊息長度加上結束關鍵字長度沒有超過可嵌入的最大容量 ; ENG: Ensure the message size plus end keyword length does not exceed the maximum embedding capacity
+  // 中文：確認目前尚未嵌入完所有訊息位元與結束關鍵字位元 ; ENG: Continue embedding only while there are remaining message or end-keyword bits
   ///////////////////////////////
-  // Converge toward angle 3.
+  // Converge toward angle 3.                   use (with 7, without 3) in decode side
   ///////////////////////////////
   if (  av1_is_directional_mode(mi->mode)
      && av1_use_angle_delta(mi->bsize)
@@ -595,7 +449,6 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
     printf(" frame type %d, ori_angle_delta: %d, embedded: %d → new_angle_delta: %d, total_bits: %d, bsize %d, hidden_bits_count %d\n",cm->current_frame.frame_type, abs_angle, hidden_value, written_angle, hidden_bits_count, mi->bsize, hidden_bits_count);
   }
   #endif
-#endif
 
   *mi_addr = *mi;
   copy_mbmi_ext_frame_to_mbmi_ext(&x->mbmi_ext, &ctx->mbmi_ext_best,

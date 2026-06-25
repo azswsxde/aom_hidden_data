@@ -184,9 +184,9 @@ int main(int argc, char **argv) {
 
   if (argc != 10) die("Invalid number of arguments");
 
-  if (hidden_data_init("data.bin") != 0) {
+  /*if (hidden_data_init("data.bin") != 0) {
     die("Failed to load hidden data.");
-  }
+  }*/
 
   codec_arg = argv[1]; // only av1
   width_arg = argv[2];
@@ -269,7 +269,7 @@ int main(int argc, char **argv) {
 
   aom_video_writer_close(writer);
 
-  hidden_data_free();
+  //hidden_data_free();
 
   return EXIT_SUCCESS;
 }
