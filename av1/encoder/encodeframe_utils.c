@@ -188,6 +188,7 @@ static short end_keyword_value = 24;
 static int current_value_index = 0;
 static short current_keyword_index = 0;
 static int hidden_bits_count = 0;
+static int max_message_size = 9999999;
 #endif
 
 void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
@@ -220,9 +221,9 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
   // 中文：排除 dry run 模式，dry run 僅模擬流程不應實際寫入資料 ; ENG: Exclude dry run mode to avoid embedding data during simulation
   // 中文：僅在純內部預測畫面（keyframe 或 intra-only）進行嵌入，避免與 inter 預測干擾 ; ENG: Restrict embedding to intra-coded frames (keyframe or intra-only) to prevent interference with inter prediction
   
-#if 0
+#if 1
   //hide data from file
-  #if 0
+  #if 1
   if (  av1_is_directional_mode(mi->mode)
     && av1_use_angle_delta(mi->bsize)
     && DoHiddingData

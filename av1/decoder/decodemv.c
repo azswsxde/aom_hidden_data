@@ -605,7 +605,7 @@ static int read_angle_delta(aom_reader *r, aom_cdf_prob *cdf) {
   return sym - MAX_ANGLE_DELTA;
 }
 #if 1
-#if 0
+#if 1
 ////////////////////////////////////
 /// without 7
 ////////////////////////////////////
@@ -985,9 +985,8 @@ static void read_intra_frame_mode_info(AV1_COMMON *const cm,
 
   if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
   {
-#if 0
-    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) && !got_end_keyword)
-    {
+#if 1
+    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)/* && !got_end_keyword*/)   {
       //printf("frame type %d mi_row %d, mi_col %d ",cm->current_frame.frame_type, mi_row, mi_col);
       mbmi->angle_delta[PLANE_TYPE_Y] = read_angle_delta_with_hidden_data(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize);
     }
@@ -1257,8 +1256,8 @@ static void read_intra_block_mode_info(AV1_COMMON *const cm,
 
   if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
   {
-#if 0
-    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) && !got_end_keyword)
+#if 1
+    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) /*&& !got_end_keyword*/)
     {
       printf("frame type %d ",cm->current_frame.frame_type);
       mbmi->angle_delta[PLANE_TYPE_Y] = read_angle_delta_with_hidden_data(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize);

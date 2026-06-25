@@ -165,6 +165,43 @@ static inline void inverse_transform_block(DecoderCodingBlock *dcb, int plane,
   memset(dqcoeff, 0, (scan_line + 1) * sizeof(dqcoeff[0]));
 }
 static count = 0;
+
+
+static inline int allow_ac_hide_tx_type(TX_TYPE tx_type) {
+  switch (tx_type) {
+    case DCT_DCT:
+      return 2;
+
+    case ADST_DCT:
+    case DCT_ADST:
+    case FLIPADST_DCT:
+    case DCT_FLIPADST:
+      return 1;
+
+    case ADST_ADST:
+    case FLIPADST_FLIPADST:
+    case ADST_FLIPADST:
+    case FLIPADST_ADST:
+      return 1;
+
+    default:
+      return 0;
+  }
+}
+
+static inline int is_strict_adst_tx_type(TX_TYPE tx_type) {
+  switch (tx_type) {
+    case ADST_ADST:
+    case FLIPADST_FLIPADST:
+    case ADST_FLIPADST:
+    case FLIPADST_ADST:
+      return 1;
+
+    default:
+      return 0;
+  }
+}
+
 static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
                                            const TX_TYPE tx_type,
                                            const TX_SIZE tx_size, uint8_t *dst,
@@ -180,7 +217,7 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
   MACROBLOCKD *const xd = &dcb->xd;
   const int16_t dequant = xd->plane[plane].seg_dequant_QTX[mbmi->segment_id][1]; //AC dequant
   //if (eob > 1)
-  if (eob > 16)
+  /*if (eob > 8)
   {
     if (log_scale == 0 || (log_scale == 1 && dequant % 2 == 0))
     {
@@ -251,6 +288,169 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
           }
         }
       }
+    }
+  }*/
+
+  if (eob > 8 && allow_ac_hide_tx_type(tx_type) > 0) {
+    if (log_scale == 0 || (log_scale == 1 && dequant % 2 == 0)) {
+      const SCAN_ORDER *const scan_order = get_scan(tx_size, tx_type);
+
+      tran_low_t qcoeff = 0;
+      size_t abs_ac_qcoeff;
+      bool mark_check = false;
+      int eob_hidden_count = 0;
+      int nz_ac = 0;
+
+      const int strict_adst = is_strict_adst_tx_type(tx_type);
+
+      /*
+      * count nonzero AC
+      * skip idx = 0 DC
+      */
+      for (int idx = eob - 1; idx > 1; idx--) {
+        const int pos = scan_order->scan[idx];
+
+        if (mark_dqcoeff[pos] != 0) {
+          nz_ac++;
+        }
+      }
+
+      float ratio = (float)nz_ac / eob;
+
+      /*
+      * Must match encoder side:
+      *
+      * DCT_DCT:
+      *   use last half of EOB
+      *
+      * ADST_DCT / DCT_ADST / FLIPADST_DCT / DCT_FLIPADST:
+      *   use last 1/3 of EOB
+      *
+      * ADST_ADST / FLIPADST_FLIPADST / ADST_FLIPADST / FLIPADST_ADST:
+      *   use last 1/4 of EOB
+      */
+      int idx_check;
+
+      if (tx_type == DCT_DCT) {
+        idx_check = eob / 2;
+      } else if (strict_adst) {
+        idx_check = eob * 3 / 4;
+      } else {
+        idx_check = eob * 2 / 3;
+      }
+
+      /*
+      * Must match encoder side.
+      *
+      * DCT_DCT:
+      *   abs(qcoeff) = 3 ~ 14
+      *
+      * ADST_DCT / DCT_ADST / FLIPADST_DCT / DCT_FLIPADST:
+      *   abs(qcoeff) = 3 ~ 9
+      *
+      * strict ADST:
+      *   abs(qcoeff) = 3 ~ 7
+      */
+      int max_abs_qcoeff;
+
+      if (tx_type == DCT_DCT) {
+        max_abs_qcoeff = 15;
+      } else if (strict_adst) {
+        max_abs_qcoeff = 8;
+      } else {
+        max_abs_qcoeff = 10;
+      }
+
+      /*
+      * Must match encoder side.
+      *
+      * DCT_DCT can hide 2 bits per block.
+      * ADST / FLIPADST only hide 1 bit per block.
+      */
+      int max_hide_per_block;
+
+      if (tx_type == DCT_DCT) {
+        max_hide_per_block = eob/4;
+      } else {
+        max_hide_per_block = 0;
+        if (eob >= 16)
+          max_hide_per_block = 1;
+      }
+
+      for (int idx = eob - 1; idx > 1; idx--) {
+        if (idx < idx_check || max_hide_per_block == 0) {
+          break;
+        }
+
+        /*
+        * Must match encoder side.
+        */
+        /*if (ratio < 0.3) {
+          break;
+        }*/
+
+        const int pos = scan_order->scan[idx];
+
+        if (mark_dqcoeff[pos] == 0) {
+          continue;
+        }
+
+        int shift_dqcoeff = abs(mark_dqcoeff[pos]) << log_scale;
+
+        /*
+        * Confirm dqcoeff can map back to qcoeff.
+        */
+        if ((shift_dqcoeff % dequant) != 0) {
+          continue;
+        }
+
+        abs_ac_qcoeff = shift_dqcoeff / dequant;
+
+        /*
+        * Must match encoder side BR range.
+        * Important:
+        * encoder must keep modified qcoeff inside this range.
+        */
+        if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < max_abs_qcoeff) {
+          if (!hidden_data_decode_got_end_keyword()) {
+            int injected_value = abs_ac_qcoeff % 2;
+
+            int end_found = hidden_data_decode_push_bit(
+                injected_value, HIDDEN_DATA_CARRIER_COEF);
+
+            printf("[COEF_READ] tx_type %d eob %d idx %d qabs %zu "
+                  "injected %d, total_bits %zu, payload_bits %zu, "
+                  "keyword_buffer %06X, end_found %d\n",
+                  tx_type,
+                  eob,
+                  idx,
+                  abs_ac_qcoeff,
+                  injected_value,
+                  hidden_data_decode_get_total_bits(),
+                  hidden_data_decode_get_payload_bits(),
+                  hidden_data_decode_get_keyword_buffer(),
+                  end_found);
+          }
+
+          mark_check = true;
+          eob_hidden_count++;
+
+          if (eob_hidden_count >= max_hide_per_block) {
+            break;
+          }
+        }
+      }
+
+      /*if (mark_check) {
+        printf("[COEF_READ_BLOCK] tx_type %d eob %d hidden_count %d "
+              "ratio %.3f dequant %d log_scale %d\n",
+              tx_type,
+              eob,
+              eob_hidden_count,
+              ratio,
+              dequant,
+              log_scale);
+      }*/
     }
   }
 
@@ -325,7 +525,7 @@ static inline void predict_and_reconstruct_intra_block(
                                               reduced_tx_set_used);
       struct macroblockd_plane *const pd = &xd->plane[plane];
       uint8_t *dst = &pd->dst.buf[(row * pd->dst.stride + col) << MI_SIZE_LOG2];      
-#if 0
+#if 1
       if (  (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
          && plane == AOM_PLANE_Y
          && av1_is_directional_mode(mbmi->mode)

@@ -730,6 +730,41 @@ static short hidden_values = 4;
 static int current_value_index = 0;
 static int hidden_bits_count = 0;
 static int mark_quant = 0;
+static inline int allow_ac_hide_tx_type(TX_TYPE tx_type) {
+  switch (tx_type) {
+    case DCT_DCT:
+      return 2;  // 最安全，可以稍微積極
+
+    case ADST_DCT:
+    case DCT_ADST:
+    case FLIPADST_DCT:
+    case DCT_FLIPADST:
+      return 1;  // 可以，但保守
+
+    case ADST_ADST:
+    case FLIPADST_FLIPADST:
+    case ADST_FLIPADST:
+    case FLIPADST_ADST:
+      return 1;  // 更保守，只處理很後面的高頻
+
+    default:
+      return 0;  // IDTX / V_* / H_* 不建議直接藏
+  }
+}
+
+static inline int is_strict_adst_tx_type(TX_TYPE tx_type) {
+  switch (tx_type) {
+    case ADST_ADST:
+    case FLIPADST_FLIPADST:
+    case ADST_FLIPADST:
+    case FLIPADST_ADST:
+      return 1;
+
+    default:
+      return 0;
+  }
+}
+
 static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
                                BLOCK_SIZE plane_bsize, TX_SIZE tx_size,
                                void *arg) {
@@ -817,6 +852,137 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
     av1_inverse_transform_block(xd, dqcoeff, plane, tx_type, tx_size, dst,
                                 dst_stride, *eob,
                                 cm->features.reduced_tx_set_used);
+
+  int log_scale = av1_get_tx_scale(tx_size);
+  if ( av1_is_directional_mode(mbmi->mode)
+      && av1_use_angle_delta(mbmi->bsize)
+      && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
+      && plane == AOM_PLANE_Y
+      && args->dry_run == OUTPUT_ENABLED
+      && allow_ac_hide_tx_type(tx_type) > 0
+      && *eob > 8
+      && hidden_data_has_next_bit()
+      && (log_scale == 0 || (log_scale == 1 && p->dequant_QTX[1] % 2 == 0))
+      )
+    {
+      int32_t *mark_qcoeff  = p->qcoeff + BLOCK_OFFSET(block);
+      tran_low_t *mark_dqcoeff = p->dqcoeff + BLOCK_OFFSET(block);
+      uint16_t eob = p->eobs[block];
+      int hidden_value = 0;
+      int nz_ac = 0;
+      tran_low_t dqcoeff_temp;
+      size_t abs_ac_qcoeff;
+      bool mark_check = false;
+      int eob_hidden_count = 0;
+
+      const int tx_hide_level = allow_ac_hide_tx_type(tx_type);
+      const int strict_adst = is_strict_adst_tx_type(tx_type);
+
+      for (int idx = eob -1 ; idx > 1; idx--)
+      {
+        if (mark_dqcoeff[scan_order->scan[idx]] != 0)
+          nz_ac++;
+      }
+      float ratio = (float)nz_ac / eob;
+      int idx_check;
+
+      if (tx_type == DCT_DCT) {
+        idx_check = eob / 2;
+      } else if (strict_adst) {
+        idx_check = eob * 3 / 4;
+      } else {
+        idx_check = eob * 2 / 3;
+      }
+
+      int max_hide_per_block;
+
+      if (tx_type == DCT_DCT) {
+        max_hide_per_block = eob/4;
+      } else {
+        max_hide_per_block = 0;
+        if (eob >= 16)
+          max_hide_per_block = 1;
+      }
+
+
+      int max_abs_qcoeff;
+
+      if (tx_type == DCT_DCT) {
+        max_abs_qcoeff = 15;
+      } else if (strict_adst) {
+        max_abs_qcoeff = 8;
+      } else {
+        max_abs_qcoeff = 10;
+      }
+
+      for (int idx = eob -1 ; idx > 1; idx--)
+      {
+        if (!hidden_data_has_next_bit()) {
+          break;
+        }
+
+        if (idx < idx_check)
+          break;
+
+        if (max_hide_per_block == 0)
+          break;
+
+        int shift_dqcoeff = mark_dqcoeff[scan_order->scan[idx]] << log_scale;
+        // Skip BR HR
+        if (mark_dqcoeff[scan_order->scan[idx]] != 0 && (shift_dqcoeff % p->dequant_QTX[1] == 0))
+        {
+          //abs_ac_qcoeff = abs(mark_dqcoeff[scan_order->scan[idx]] / p->dequant_QTX[1]);
+          abs_ac_qcoeff = abs(mark_qcoeff[scan_order->scan[idx]]);
+
+          if (!(abs_ac_qcoeff > 2 && abs_ac_qcoeff < max_abs_qcoeff)) {
+            continue;
+          }
+
+          hidden_value = hidden_data_peek_bit();
+          current_value_index = (current_value_index + 1) % hidden_values;
+
+          if (hidden_value != (abs_ac_qcoeff % 2))
+          {
+
+            if (abs_ac_qcoeff == 3) {
+               if (mark_qcoeff[scan_order->scan[idx]] > 0)
+                  mark_qcoeff[scan_order->scan[idx]]++;   // +3 -> +4
+                else
+                  mark_qcoeff[scan_order->scan[idx]]--;   // -3 -> -4
+            }
+            else{
+              if (mark_qcoeff[scan_order->scan[idx]] > 0)
+                mark_qcoeff[scan_order->scan[idx]]--;   // +4 -> +3, +5 -> +4
+              else
+                mark_qcoeff[scan_order->scan[idx]]++;   // -4 -> -3, -5 -> -4
+            }
+
+            mark_dqcoeff[scan_order->scan[idx]] = (mark_qcoeff[scan_order->scan[idx]] * p->dequant_QTX[1]) >> log_scale;
+          }
+          
+          mark_check = true;
+          hidden_data_commit_bit();
+          printf("[COEF_HIDE] eob %d, idx %d, dqcoeff %d, qcoeff %d, "
+              "embedded %d, bit_index %zu / %zu\n",
+              eob,
+              idx,
+              mark_dqcoeff[scan_order->scan[idx]],
+              mark_qcoeff[scan_order->scan[idx]],
+              hidden_value,
+              hidden_data_get_bit_index(),
+              hidden_data_get_total_bits());
+          eob_hidden_count++;
+          if (eob_hidden_count >= max_hide_per_block)
+            break;
+        }
+      }
+      
+      /*if (mark_check) {
+        printf("\n");
+        printf("dequant_ac %d eob %d hidden_bits_count %d\n", p->dequant_QTX[1], eob, hidden_bits_count);
+      }*/
+    }
+    
 #if 0
     // hide data from file
     int log_scale = av1_get_tx_scale(tx_size);
@@ -1061,7 +1227,7 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
   }
 
   // TODO(jingning): Temporarily disable txk_type check for eob=0 case.
-  // It is possible that certain collision in hash index would cause
+  // It is possible that certai n collision in hash index would cause
   // the assertion failure. To further optimize the rate-distortion
   // performance, we need to re-visit this part and enable this assert
   // again.
