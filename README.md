@@ -61,42 +61,47 @@ Replace `path/to/aom_hidden_data` with the actual path of this project.
 
 #### Parameters / 參數說明
 
-| Parameter | Description |
-|---|---|
-| `av1` | 使用 AV1 編碼格式 |
-| `video height` | 輸入 YUV 影片高度 |
-| `video width` | 輸入 YUV 影片寬度 |
-| `yuv file path with name` | 輸入 YUV 檔案路徑與檔名 |
+| Parameter                    | Description     |
+| ---------------------------- | --------------- |
+| `av1`                        | 使用 AV1 編碼格式     |
+| `video height`               | 輸入 YUV 影片高度     |
+| `video width`                | 輸入 YUV 影片寬度     |
+| `yuv file path with name`    | 輸入 YUV 檔案路徑與檔名  |
 | `output avif path with name` | 輸出 AVIF 檔案路徑與檔名 |
-| `fps` | 影片幀率 |
-| `0` | 起始幀或 offset 參數 |
-| `total_frame` | 編碼總幀數 |
-| `bitrate` | 目標位元率 |
+| `fps`                        | 影片幀率            |
+| `0`                          | 起始幀或 offset 參數  |
+| `total_frame`                | 編碼總幀數           |
+| `bitrate`                    | 目標位元率           |
 
 #### Hidden Payload File / 隱藏資料檔案
 
 Before running the encoder, prepare a binary payload file named `data.bin`.
 
-The encoder reads the hidden payload from `data.bin` during encoding. After the file content is loaded, the encoder automatically appends `NCU` to the end of the payload as an ending symbol. Therefore, users only need to prepare the original payload content in `data.bin`; the ending symbol does not need to be manually added.
+The encoder reads the hidden payload from `data.bin` during encoding. The file content is loaded as binary data and converted into a bitstream for embedding. After the payload is loaded, the encoder automatically appends the keyword `NCU` to the end of the payload as an ending symbol. Therefore, users only need to place the original payload content in `data.bin`; the ending keyword does not need to be manually added.
 
 編碼前請先準備一個名為 `data.bin` 的二進位檔案。
 
-編碼器會在 encoding 過程中讀取 `data.bin` 作為欲嵌入的隱藏資料。讀取檔案內容後，encoder 會自動在 payload 最後加入 `NCU` 作為資料結束符號。因此，使用者只需要將原始欲嵌入資料放入 `data.bin`，不需要手動在檔案尾端加入結束符號。
+Encoder 會在 encoding 過程中讀取 `data.bin` 作為欲嵌入的隱藏資料。檔案內容會以 binary data 方式讀入，並轉換成 bitstream 後進行嵌入。讀取檔案內容後，encoder 會自動在 payload 最後加入 `NCU` 作為資料結束符號。因此，使用者只需要將原始欲嵌入資料放入 `data.bin`，不需要手動在檔案尾端加入結束符號。
 
 `data.bin` should be placed in the working directory where `simple_encoder_mark` is executed, unless another path is configured in the source code.
 
 `data.bin` 應放在執行 `simple_encoder_mark` 的工作目錄下，除非程式碼中有另外指定其他讀取路徑。
 
+If `data.bin` cannot be found or cannot be loaded correctly, the encoder will not have a valid hidden payload to embed. Please check the execution directory and file permission before running the encoder.
+
+若 `data.bin` 不存在或讀取失敗，encoder 將無法取得有效的 hidden payload 進行嵌入。執行前請確認工作目錄與檔案權限是否正確。
+
 Example:
 
 ```bash
-echo -n "hidden message" > data.bin
+head -c 1024 /dev/urandom > data.bin
 ./simple_encoder_mark av1 1280 720 input.yuv output.avif 30 0 150 8192
 ```
 
 In this example, the encoder reads the content of `data.bin`, automatically appends `NCU` after `hidden message`, and embeds the resulting payload during AV1 encoding.
 
 在此範例中，encoder 會讀取 `data.bin` 中的 `hidden message`，接著自動在資料最後加入 `NCU`，並將完整 payload 嵌入至 AV1 編碼流程中。
+
 
 ---
 
@@ -163,27 +168,44 @@ Angle-based data hiding embeds information by modifying or selecting specific in
 
 ### 5.2 Coefficient-based Data Hiding / 係數資料隱藏
 
-Coefficient-based data hiding embeds information by modifying selected transform coefficient-related information after quantization.
+Coefficient-based data hiding embeds information by modifying selected quantized transform coefficients after quantization.
 
-本方法主要針對 AV1 量化後的轉換係數進行資料嵌入。  
-由於係數會直接影響重建影像品質，因此需要特別注意嵌入位置與條件控制。
+本方法主要針對 AV1 量化後的轉換係數進行資料嵌入。
+目前的 coefficient-based 方法會選擇特定非零 AC 係數，並透過調整 `qcoeff` 絕對值的奇偶性來表示 hidden bit。修改後會同步更新 `dqcoeff`，以維持 encoder-side reconstruction 的一致性。
+
+The current coefficient-based method selects specific non-zero AC coefficients and embeds hidden bits by adjusting the parity of the absolute quantized coefficient value. After modifying `qcoeff`, the corresponding `dqcoeff` is also updated to keep encoder-side reconstruction consistent.
+
+為了降低失真並提高 decode 端擷取穩定性，嵌入條件會根據 transform type 調整：
+
+| Transform type                                                     | Strategy            |
+| ------------------------------------------------------------------ | ------------------- |
+| `DCT_DCT`                                                          | 較安全，可使用較積極的嵌入條件     |
+| `ADST_DCT`, `DCT_ADST`, `FLIPADST_DCT`, `DCT_FLIPADST`             | 可嵌入，但使用較保守的條件       |
+| `ADST_ADST`, `FLIPADST_FLIPADST`, `ADST_FLIPADST`, `FLIPADST_ADST` | 更保守，只選擇較後段的高頻 AC 係數 |
+| `IDTX`, `V_*`, `H_*` and other transform types                     | 不建議嵌入，因此跳過          |
+
+The embedding and extraction rules must be exactly matched between the encoder and decoder. This includes the EOB threshold, transform type filter, scan position range, coefficient magnitude range, `log_scale/dequant` condition, and the maximum number of hidden bits embedded or read per block.
+
+Encode 端與 Decode 端的篩選條件必須完全一致，包含 `eob` 門檻、transform type 判斷、scan position 範圍、係數絕對值範圍、`log_scale/dequant` 條件，以及每個 block 最多嵌入或讀取的 hidden bit 數量。若任一條件不一致，decode 端可能會掃描到不同係數，導致 hidden payload 擷取錯誤。
 
 可測試的實驗條件包含：
 
-- 量化參數條件
-- 掃描位置選擇
-- 區塊條件限制
-- 嵌入密度控制
-- non-zero AC coefficient ratio 條件
-- 不同 bitrate 下的穩定性
-- 不同影片內容下的影像品質與容量變化
+* 量化參數條件
+* transform type 條件
+* 掃描位置選擇
+* 區塊條件限制
+* 嵌入密度控制
+* non-zero AC coefficient ratio 條件
+* 不同 bitrate 下的穩定性
+* 不同影片內容下的影像品質與容量變化
 
 相關程式碼位置如下：
 
-| Process | File |
-|---|---|
-| Encoder embedding | `encodemb.c` |
+| Process            | File            |
+| ------------------ | --------------- |
+| Encoder embedding  | `encodemb.c`    |
 | Decoder extraction | `decodeframe.c` |
+
 
 ---
 
@@ -211,19 +233,21 @@ The experimental conditions can currently be controlled by manually enabling or 
 
 目前版本仍屬於研究與實驗階段，具有以下限制：
 
-1. 嵌入資料尚未從外部檔案讀取。
-2. 目前先使用固定 4-bit 資料重複嵌入。
+1. Hidden payload 目前固定由工作目錄下的 `data.bin` 讀取，尚未提供 command-line argument 指定 payload path。
+2. Encoder 會自動在 payload 最後加入 `NCU` 作為結束符號，目前尚未加入 payload length header 或更完整的同步機制。
 3. 實驗條件主要透過手動修改程式碼控制。
 4. 尚未加入完整的錯誤更正碼機制。
-5. 不同影片、bitrate 與區塊條件下，嵌入穩定性仍需進一步分析。
+5. 不同影片、bitrate、block size、transform type 與係數分布條件下，嵌入穩定性仍需進一步分析。
+6. Decode 端目前依賴與 Encode 端完全一致的掃描與篩選規則，若兩端條件不同，可能造成 hidden payload 擷取錯誤。
 
 The current implementation is still in the experimental stage and has the following limitations:
 
-1. The payload is not yet read from an external file.
-2. A fixed 4-bit payload is repeatedly embedded.
+1. The hidden payload is currently read from `data.bin` in the working directory, and command-line payload path selection is not yet supported.
+2. The encoder automatically appends `NCU` as the ending keyword, but a payload length header or a more robust synchronization mechanism has not yet been added.
 3. Experimental conditions are mainly controlled by manually modifying the source code.
 4. Error correction coding has not yet been fully integrated.
-5. Embedding stability under different videos, bitrates, and block conditions requires further evaluation.
+5. Embedding stability under different videos, bitrates, block sizes, transform types, and coefficient distributions requires further evaluation.
+6. The decoder currently relies on exactly the same scanning and filtering rules as the encoder. If the conditions differ between encoder and decoder, hidden payload extraction may fail.
 
 ---
 
@@ -268,15 +292,15 @@ The main research objectives include improving embedding stability, reducing vis
 
 未來可進一步加入以下功能：
 
-1. 從外部檔案讀取欲嵌入資料。
-2. 加入 payload 長度、header 或同步資訊。
-3. 加入錯誤更正碼，提高解碼端資料擷取穩定性。
-4. 自動化實驗參數設定，減少手動修改程式碼。
-5. 輸出嵌入容量、錯誤率與影像品質分析結果。
-6. 支援不同嵌入策略之快速切換。
-7. 建立完整的實驗腳本，用於多影片、多 bitrate 與多條件測試。
+1. 支援透過 command-line argument 指定 hidden payload file path。
+2. 加入錯誤更正碼，提高解碼端資料擷取穩定性。
+3. 自動化實驗參數設定，減少手動修改程式碼。
+4. 輸出嵌入容量、錯誤率與影像品質分析結果。
+5. 支援不同嵌入策略之快速切換。
+6. 建立完整的實驗腳本，用於多影片、多 bitrate 與多條件測試。
+7. 進一步分析不同 transform type、scan position、qcoeff 範圍與 EOB 條件對影像品質和 payload recovery rate 的影響。
 
-Possible future improvements include reading payloads from external files, adding error correction codes, automating experimental parameters, and providing complete evaluation scripts for multiple videos, bitrates, and embedding conditions.
+Possible future improvements include supporting command-line payload file selection, adding payload length or synchronization headers, integrating error correction codes, automating experimental parameters, and providing complete evaluation scripts for multiple videos, bitrates, transform types, and embedding conditions.
 
 
 ## 12. 相關參考
