@@ -273,6 +273,7 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
      && !dry_run
      && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
      && hidden_data_has_next_bit()
+     //&& mi->mode != D45_PRED // degree 45
      )
   {
     int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
