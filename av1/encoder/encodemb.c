@@ -831,9 +831,10 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
        && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
        && plane == AOM_PLANE_Y
        && args->dry_run == OUTPUT_ENABLED
-       && *eob > 16
+       //&& *eob > 32
        && (log_scale == 0 || (log_scale == 1 && p->dequant_QTX[1] % 2 == 0))
        && hidden_data_has_next_bit()
+       //&& !(tx_type == ADST_ADST || tx_type == FLIPADST_FLIPADST || tx_type == ADST_FLIPADST || tx_type == FLIPADST_ADST || tx_type == DCT_ADST || tx_type == DCT_FLIPADST || tx_type == FLIPADST_DCT || tx_type == ADST_DCT || tx_type == DCT_DCT)
        )
     {
       int32_t *mark_qcoeff  = p->qcoeff + BLOCK_OFFSET(block);
@@ -855,24 +856,24 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
       //////////////////////////////
       ///     hide index check
       //////////////////////////////
-      int idx_check = eob/2;
-      //int idx_check = eob*2/3;
+      //int idx_check = eob/2;
+      //int idx_check = eob*1/4;
       //int idx_check = eob*3/4;
       for (int idx = eob -1 ; idx > 1; idx--)
       {
         if (!hidden_data_has_next_bit()) {
           break;
         }
-        if (idx < idx_check)
-          break;
+        //if (idx < idx_check)
+          //break;
 
         //////////////////////////////
         ///     nonzero ac ratio
         //////////////////////////////
-        if (ratio < 0.3)
-        //if (ratio < 0.4)
+        //if (ratio < 0.1)
+        //if (ratio < 0.25)
         //if (ratio < 0.5)
-          break;
+        //  break;
         int shift_dqcoeff = mark_dqcoeff[scan_order->scan[idx]] << log_scale;
         // Skip BR HR
         if (mark_dqcoeff[scan_order->scan[idx]] != 0 && (shift_dqcoeff % p->dequant_QTX[1] == 0))
@@ -883,9 +884,10 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
           //////////////////////////////
           ///      ac safe range
           //////////////////////////////
-          if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 5)
+          //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 5)
           //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 6)
-          //if (abs_ac_qcoeff > 3 && abs_ac_qcoeff < 7)
+          //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 15)
+          if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 9)
           {
             hidden_value = hidden_data_peek_bit();
             if (abs_ac_qcoeff < 4)
@@ -934,10 +936,11 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
             /////////////////////////////////
             ///  hide data amount / per block
             /////////////////////////////////
-            if (eob_hidden_count == 1)
+            ///if (eob_hidden_count == 1)
             //if (eob_hidden_count == 2)
-            //if (eob_hidden_count == 3)
-              break;
+            //if (eob_hidden_count == 4)
+            //if (eob_hidden_count == 8)
+            //  break;
           }
         }
       }

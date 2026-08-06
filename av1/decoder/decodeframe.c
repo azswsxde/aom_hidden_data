@@ -223,7 +223,8 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
   // ENG: The decoder-side filtering conditions must match the encoder-side conditions exactly, including the EOB threshold,
   //      log_scale/dequant constraint, idx_check, nonzero AC ratio, abs_ac_qcoeff range, and the number of hidden bits read per block.
   //      If any condition differs from the encoder side, the decoder may scan different coefficients and extract incorrect hidden data.
-  if (eob > 16)
+  //if (eob > 32)
+  //if (!(tx_type == ADST_ADST || tx_type == FLIPADST_FLIPADST || tx_type == ADST_FLIPADST || tx_type == FLIPADST_ADST || tx_type == DCT_ADST || tx_type == DCT_FLIPADST || tx_type == FLIPADST_DCT || tx_type == ADST_DCT || tx_type == DCT_DCT))
   {
     if (log_scale == 0 || (log_scale == 1 && dequant % 2 == 0))
     {
@@ -245,20 +246,20 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
       //////////////////////////////
       ///     hide index check
       //////////////////////////////
-      int idx_check = eob/2;
-      //int idx_check = eob*2/3;
+      //int idx_check = eob/2;
+      //int idx_check = eob*1/4;
       //int idx_check = eob*3/4;
       for (int idx = eob -1 ; idx > 1; idx--)
       {
-        if (idx < idx_check)
-          break;
+        //if (idx < idx_check)
+          //break;
         //////////////////////////////
         ///     nonzero ac ratio
         //////////////////////////////
-        if (ratio < 0.3)
-        //if (ratio < 0.4)
+        //if (ratio < 0.1)
+        //if (ratio < 0.25)
         //if (ratio < 0.5)
-          break;
+        //  break;
         int shift_dqcoeff = abs(mark_dqcoeff[scan_order->scan[idx]]) << log_scale;
         if (mark_dqcoeff[scan_order->scan[idx]] != 0 && (shift_dqcoeff % dequant == 0))
         {
@@ -266,9 +267,10 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
           //////////////////////////////
           ///      ac safe range
           //////////////////////////////
-          if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 5)
+          //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 5)
           //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 6)
-          //if (abs_ac_qcoeff > 3 && abs_ac_qcoeff < 7)
+          //if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 15)
+          if (abs_ac_qcoeff > 2 && abs_ac_qcoeff < 9)
           {
             if (!hidden_data_decode_got_end_keyword()) {
               int injected_value = (abs_ac_qcoeff % 2);
@@ -287,10 +289,11 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
             /////////////////////////////////
             ///  hide data amount / per block
             /////////////////////////////////
-            if (eob_hidden_count == 1)
+            //if (eob_hidden_count == 1)
             //if (eob_hidden_count == 2)
-            //if (eob_hidden_count == 3)
-              break;
+            //if (eob_hidden_count == 4)
+            //if (eob_hidden_count == 8)
+            //  break;
           }
         }
       }
