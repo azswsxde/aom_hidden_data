@@ -176,7 +176,7 @@ static inline void copy_mbmi_ext_frame_to_mbmi_ext(
   memcpy(mbmi_ext->global_mvs, mbmi_ext_best->global_mvs,
          sizeof(mbmi_ext->global_mvs));
 }
-
+static int count = 0;
 void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
                       const PICK_MODE_CONTEXT *const ctx, int mi_row,
                       int mi_col, BLOCK_SIZE bsize, RUN_TYPE dry_run, bool DoHiddingData) {
@@ -275,52 +275,55 @@ void av1_update_state(const AV1_COMP *const cpi, ThreadData *td,
      && hidden_data_has_next_bit()
      )
   {
-    int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
-    int written_angle = abs_angle;
-    int hidden_value = hidden_data_peek_bit();
-    int embed_success = 0;
-    int sub_angle = (abs_angle / 2) * 2;
-    int64_t rd_plus = -1, rd_minus= -1;
-    if (abs_angle != 6)
-      rd_plus = av1_test_intra_angle_delta_model(cpi, x, mi->bsize, mi->mode, mi->angle_delta[PLANE_TYPE_Y] + 1, 1);
-    if (abs_angle != 0)
-      rd_minus = av1_test_intra_angle_delta_model(cpi, x, mi->bsize, mi->mode, mi->angle_delta[PLANE_TYPE_Y] - 1, 1);
+    if (count%2 == 1) {
+      int abs_angle = mi->angle_delta[PLANE_TYPE_Y] + MAX_ANGLE_DELTA;
+      int written_angle = abs_angle;
+      int hidden_value = hidden_data_peek_bit();
+      int embed_success = 0;
+      int sub_angle = (abs_angle / 2) * 2;
+      int64_t rd_plus = -1, rd_minus= -1;
+      if (abs_angle != 6)
+        rd_plus = av1_test_intra_angle_delta_model(cpi, x, mi->bsize, mi->mode, mi->angle_delta[PLANE_TYPE_Y] + 1, 1);
+      if (abs_angle != 0)
+        rd_minus = av1_test_intra_angle_delta_model(cpi, x, mi->bsize, mi->mode, mi->angle_delta[PLANE_TYPE_Y] - 1, 1);
 
-    printf("[HIDE] rd_plus: %6d, rd_minus: %6d, ",rd_plus,rd_minus);
-    bool use_rd_plus = true;
+      printf("[HIDE] rd_plus: %6d, rd_minus: %6d, ",rd_plus,rd_minus);
+      bool use_rd_plus = true;
 
-    if (rd_plus < 0 || (rd_minus < rd_plus && rd_minus > -1)) //越小越好但-1是另外
-      use_rd_plus = false;
+      if (rd_plus < 0 || (rd_minus < rd_plus && rd_minus > -1)) //越小越好但-1是另外
+        use_rd_plus = false;
 
-    if (hidden_value == 1)
-      {
-        if (abs_angle % 2 == 0)
-          if (use_rd_plus)
-            written_angle = abs_angle + 1;
-          else
-            written_angle = abs_angle - 1;
+      if (hidden_value == 1)
+        {
+          if (abs_angle % 2 == 0)
+            if (use_rd_plus)
+              written_angle = abs_angle + 1;
+            else
+              written_angle = abs_angle - 1;
+        }
+        else
+        {
+          if (abs_angle % 2 == 1)
+            if (use_rd_plus)
+              written_angle = abs_angle + 1;
+            else
+              written_angle = abs_angle - 1;
+        }
+      mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
+      embed_success = 1;
+      if (embed_success) {
+        hidden_data_commit_bit();
       }
-      else
-      {
-        if (abs_angle % 2 == 1)
-          if (use_rd_plus)
-            written_angle = abs_angle + 1;
-          else
-            written_angle = abs_angle - 1;
-      }
-    mi->angle_delta[PLANE_TYPE_Y] = written_angle - MAX_ANGLE_DELTA;
-    embed_success = 1;
-    if (embed_success) {
-      hidden_data_commit_bit();
+      printf("[ANGLE_HIDE] embedded %d, written_angle %d, bit_index %zu / %zu, "
+          "payload_bits %zu, end_bits %zu\n",
+          hidden_value,
+          written_angle,
+          hidden_data_get_bit_index(),
+          hidden_data_get_total_bits(),
+          hidden_data_get_payload_bits(),
+          hidden_data_get_end_keyword_bits());
     }
-    printf("[ANGLE_HIDE] embedded %d, written_angle %d, bit_index %zu / %zu, "
-         "payload_bits %zu, end_bits %zu\n",
-         hidden_value,
-         written_angle,
-         hidden_data_get_bit_index(),
-         hidden_data_get_total_bits(),
-         hidden_data_get_payload_bits(),
-         hidden_data_get_end_keyword_bits());
+    count++;
   }
   #endif
   #if 0

@@ -726,7 +726,29 @@ void av1_encode_sb(const struct AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
   }
 }
 
-static inline int allow_ac_hide_tx_type(TX_TYPE tx_type) {
+static inline int allow_ac_hide_tx_type_eob_size(TX_TYPE tx_type) {
+  switch (tx_type) {
+    case DCT_DCT:
+      return 32;  // 最安全，可以稍微積極
+
+    case ADST_DCT:
+    case DCT_ADST:
+    case FLIPADST_DCT:
+    case DCT_FLIPADST:
+      return 32;  // 可以，但保守
+
+    case ADST_ADST:
+    case FLIPADST_FLIPADST:
+    case ADST_FLIPADST:
+    case FLIPADST_ADST:
+      return 32;  // 更保守，只處理很後面的高頻
+
+    default:
+      return 0;  // IDTX / V_* / H_* 不建議直接藏
+  }
+}
+
+static inline int allow_ac_hide_tx_type_bits_block(TX_TYPE tx_type) {
   switch (tx_type) {
     case DCT_DCT:
       return 2;  // 最安全，可以稍微積極
@@ -735,7 +757,7 @@ static inline int allow_ac_hide_tx_type(TX_TYPE tx_type) {
     case DCT_ADST:
     case FLIPADST_DCT:
     case DCT_FLIPADST:
-      return 1;  // 可以，但保守
+      return 2;  // 可以，但保守
 
     case ADST_ADST:
     case FLIPADST_FLIPADST:
@@ -745,19 +767,6 @@ static inline int allow_ac_hide_tx_type(TX_TYPE tx_type) {
 
     default:
       return 0;  // IDTX / V_* / H_* 不建議直接藏
-  }
-}
-
-static inline int is_strict_adst_tx_type(TX_TYPE tx_type) {
-  switch (tx_type) {
-    case ADST_ADST:
-    case FLIPADST_FLIPADST:
-    case ADST_FLIPADST:
-    case FLIPADST_ADST:
-      return 1;
-
-    default:
-      return 0;
   }
 }
 
@@ -860,15 +869,19 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
     // 中文：要求 eob 大於 8，確保 block 中有足夠非零係數可挑選，避免在係數太少時強行嵌入造成失真 ; ENG: Require eob greater than 8 to ensure enough non-zero coefficients are available and avoid forced embedding in sparse blocks
     // 中文：確認 hidden payload 仍有下一個 bit 可嵌入，避免在資料已嵌完後繼續修改係數 ; ENG: Check that the hidden payload still has a next bit to embed, avoiding coefficient changes after all data has been embedded
     // 中文：確認 transform scale 與 dequant 條件允許安全回推 dqcoeff；log_scale 為 0 可直接更新，log_scale 為 1 時要求 dequant 為偶數以避免除以 scale 後產生不一致 ; ENG: Check that the transform scale and dequant conditions allow safe dqcoeff reconstruction; log_scale 0 can be updated directly, while log_scale 1 requires an even dequant value to avoid inconsistency after scaling
+    uint16_t eobcheck = allow_ac_hide_tx_type_eob_size(tx_type);
+    int max_hide_per_block = allow_ac_hide_tx_type_bits_block(tx_type);
     if ( av1_is_directional_mode(mbmi->mode)
       && av1_use_angle_delta(mbmi->bsize)
       && (cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)
       && plane == AOM_PLANE_Y
       && args->dry_run == OUTPUT_ENABLED
-      && allow_ac_hide_tx_type(tx_type) > 0
-      && *eob > 8
+      && allow_ac_hide_tx_type_bits_block(tx_type) > 0
+      && *eob >= eobcheck 
+      && eobcheck > 0
       && hidden_data_has_next_bit()
       && (log_scale == 0 || (log_scale == 1 && p->dequant_QTX[1] % 2 == 0))
+      && max_hide_per_block > 0
       )
     {
       int32_t *mark_qcoeff  = p->qcoeff + BLOCK_OFFSET(block);
@@ -881,45 +894,23 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
       bool mark_check = false;
       int eob_hidden_count = 0;
 
-      const int tx_hide_level = allow_ac_hide_tx_type(tx_type);
-      const int strict_adst = is_strict_adst_tx_type(tx_type);
-
       for (int idx = eob -1 ; idx > 1; idx--)
       {
         if (mark_dqcoeff[scan_order->scan[idx]] != 0)
           nz_ac++;
       }
       float ratio = (float)nz_ac / eob;
+
       int idx_check;
 
       if (tx_type == DCT_DCT) {
         idx_check = eob / 2;
-      } else if (strict_adst) {
+      }
+      else{
         idx_check = eob * 3 / 4;
-      } else {
-        idx_check = eob * 2 / 3;
       }
 
-      int max_hide_per_block;
-
-      if (tx_type == DCT_DCT) {
-        max_hide_per_block = eob/4;
-      } else {
-        max_hide_per_block = 0;
-        if (eob >= 16)
-          max_hide_per_block = 1;
-      }
-
-
-      int max_abs_qcoeff;
-
-      if (tx_type == DCT_DCT) {
-        max_abs_qcoeff = 15;
-      } else if (strict_adst) {
-        max_abs_qcoeff = 8;
-      } else {
-        max_abs_qcoeff = 10;
-      }
+      int max_abs_qcoeff = 15;
 
       for (int idx = eob -1 ; idx > 1; idx--)
       {
@@ -927,10 +918,10 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
           break;
         }
 
-        if (idx < idx_check)
+        if (ratio < 0.5)
           break;
 
-        if (max_hide_per_block == 0)
+        if (idx < idx_check)
           break;
 
         int shift_dqcoeff = mark_dqcoeff[scan_order->scan[idx]] << log_scale;
@@ -945,7 +936,7 @@ static void encode_block_intra(int plane, int block, int blk_row, int blk_col,
           }
 
           hidden_value = hidden_data_peek_bit();
-          current_value_index = (current_value_index + 1) % hidden_values;
+          //current_value_index = (current_value_index + 1) % hidden_value;
 
           if (hidden_value != (abs_ac_qcoeff % 2))
           {
@@ -1049,3 +1040,4 @@ void av1_encode_intra_block_plane(const struct AV1_COMP *cpi, MACROBLOCK *x,
   av1_foreach_transformed_block_in_plane(
       xd, plane_bsize, plane, encode_block_intra_and_set_context, &arg);
 }
+

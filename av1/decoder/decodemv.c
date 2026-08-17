@@ -634,6 +634,7 @@ static int read_angle_delta_with_hidden_data(aom_reader *r, aom_cdf_prob *cdf, B
 }
 #endif
 #if 0
+static int count = 0;
 ////////////////////////////////////
 /// with 7
 ////////////////////////////////////
@@ -643,18 +644,21 @@ static int read_angle_delta_with_hidden_data(aom_reader *r, aom_cdf_prob *cdf, B
 
   // 僅對可嵌入的 sym 執行資料隱藏比對
   if(sym < 7 && !hidden_data_decode_got_end_keyword()) {
-    int injected_value = sym % 2; // 提取隱藏位元
+    if (count%2 == 1) {
+      int injected_value = sym % 2; // 提取隱藏位元
     
-    int end_found = hidden_data_decode_push_bit(injected_value, HIDDEN_DATA_CARRIER_ANGLE);
+      int end_found = hidden_data_decode_push_bit(injected_value, HIDDEN_DATA_CARRIER_ANGLE);
 
-    printf("[ANGLE_READ] sym %d, injected %d, total_bits %zu, "
-          "payload_bits %zu, keyword_buffer %06X, end_found %d\n",
-          sym,
-          injected_value,
-          hidden_data_decode_get_total_bits(),
-          hidden_data_decode_get_payload_bits(),
-          hidden_data_decode_get_keyword_buffer(),
-          end_found);
+      printf("[ANGLE_READ] sym %d, injected %d, total_bits %zu, "
+            "payload_bits %zu, keyword_buffer %06X, end_found %d\n",
+            sym,
+            injected_value,
+            hidden_data_decode_get_total_bits(),
+            hidden_data_decode_get_payload_bits(),
+            hidden_data_decode_get_keyword_buffer(),
+            end_found);
+    }
+    count++;
   }
 
   int angle_value = sym - MAX_ANGLE_DELTA;
@@ -903,7 +907,7 @@ static void read_intra_frame_mode_info(AV1_COMMON *const cm,
   if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
   {
 #if 0
-    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME)/* && !got_end_keyword*/)   {
+    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) /*&& mbmi->mode != D45_PRED*/ /* && !got_end_keyword*/)   {
       //printf("frame type %d mi_row %d, mi_col %d ",cm->current_frame.frame_type, mi_row, mi_col);
       mbmi->angle_delta[PLANE_TYPE_Y] = read_angle_delta_with_hidden_data(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize);
     }
@@ -1174,7 +1178,7 @@ static void read_intra_block_mode_info(AV1_COMMON *const cm,
   if (use_angle_delta && av1_is_directional_mode(mbmi->mode))
   {
 #if 0
-    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) /*&& !got_end_keyword*/)
+    if ((cm->current_frame.frame_type == KEY_FRAME || cm->current_frame.frame_type == INTRA_ONLY_FRAME) /*&& mbmi->mode != D45_PRED*/ /*&& !got_end_keyword*/)
     {
       printf("frame type %d ",cm->current_frame.frame_type);
       mbmi->angle_delta[PLANE_TYPE_Y] = read_angle_delta_with_hidden_data(r, ec_ctx->angle_delta_cdf[mbmi->mode - V_PRED], mbmi->bsize);

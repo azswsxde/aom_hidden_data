@@ -167,38 +167,47 @@ static inline void inverse_transform_block(DecoderCodingBlock *dcb, int plane,
 static count = 0;
 
 
-static inline int allow_ac_hide_tx_type(TX_TYPE tx_type) {
+static inline int allow_ac_hide_tx_type_eob_size(TX_TYPE tx_type) {
   switch (tx_type) {
     case DCT_DCT:
-      return 2;
+      return 32;  // 最安全，可以稍微積極
 
     case ADST_DCT:
     case DCT_ADST:
     case FLIPADST_DCT:
     case DCT_FLIPADST:
-      return 1;
+      return 32;  // 可以，但保守
 
     case ADST_ADST:
     case FLIPADST_FLIPADST:
     case ADST_FLIPADST:
     case FLIPADST_ADST:
-      return 1;
+      return 32;  // 更保守，只處理很後面的高頻
 
     default:
-      return 0;
+      return 0;  // IDTX / V_* / H_* 不建議直接藏
   }
 }
 
-static inline int is_strict_adst_tx_type(TX_TYPE tx_type) {
+static inline int allow_ac_hide_tx_type_bits_block(TX_TYPE tx_type) {
   switch (tx_type) {
+    case DCT_DCT:
+      return 2;  // 最安全，可以稍微積極
+
+    case ADST_DCT:
+    case DCT_ADST:
+    case FLIPADST_DCT:
+    case DCT_FLIPADST:
+      return 2;  // 可以，但保守
+
     case ADST_ADST:
     case FLIPADST_FLIPADST:
     case ADST_FLIPADST:
     case FLIPADST_ADST:
-      return 1;
+      return 1;  // 更保守，只處理很後面的高頻
 
     default:
-      return 0;
+      return 0;  // IDTX / V_* / H_* 不建議直接藏
   }
 }
 
@@ -220,7 +229,11 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
   // 中文：Decode 端的候選係數篩選條件必須與 Encode 端完全一致，否則會讀到不同 AC 係數並導致 hidden payload 解析錯誤 ; ENG: Decoder-side candidate coefficient filtering must exactly match the encoder side, otherwise it may read different AC coefficients and corrupt the hidden payload extraction
   // 中文：要求 eob 大於 8，與 Encode 端一致，確保 block 中有足夠係數可作為 hidden bit carrier ; ENG: Require eob greater than 8, matching the encoder side, to ensure enough coefficients are available as hidden bit carriers
   // 中文：根據 transform type 判斷是否允許 AC hiding；DCT_DCT 較安全可較積極，ADST / FLIPADST 類型需保守，IDTX、V_*、H_* 等類型不讀取隱藏資料 ; ENG: Decide whether AC hiding is allowed based on transform type; DCT_DCT is safer and can be more aggressive, ADST / FLIPADST types are conservative, while IDTX, V_*, and H_* types are not decoded
-  if (eob > 8 && allow_ac_hide_tx_type(tx_type) > 0) {
+  uint16_t eobcheck = allow_ac_hide_tx_type_eob_size(tx_type);
+
+  // 中文：根據 transform type 決定每個 block 最多讀取的 hidden bit 數量；DCT_DCT 使用 eob/4 較積極，一般 ADST / FLIPADST 僅在 eob >= 16 時讀取 1 bit，必須與 Encode 端一致 ; ENG: Select the maximum number of hidden bits read per block based on transform type; DCT_DCT uses eob/4 more aggressively, while ADST / FLIPADST reads only 1 bit when eob >= 16, matching the encoder side
+  int max_hide_per_block = allow_ac_hide_tx_type_bits_block(tx_type);
+  if (eob >= eobcheck && eobcheck > 0 && max_hide_per_block > 0) {
     if (log_scale == 0 || (log_scale == 1 && dequant % 2 == 0)) {
       const SCAN_ORDER *const scan_order = get_scan(tx_size, tx_type);
 
@@ -229,8 +242,6 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
       bool mark_check = false;
       int eob_hidden_count = 0;
       int nz_ac = 0;
-
-      const int strict_adst = is_strict_adst_tx_type(tx_type);
 
       // 中文：統計非零 AC 係數數量，跳過 DC 係數與 idx <= 1 的低頻區域，必須與 Encode 端掃描方式一致 ; ENG: Count non-zero AC coefficients while skipping the DC coefficient and very low-frequency idx <= 1 region, matching the encoder-side scan behavior
       for (int idx = eob - 1; idx > 1; idx--) {
@@ -249,44 +260,24 @@ static inline void inverse_transform_block_(DecoderCodingBlock *dcb, int plane,
 
       if (tx_type == DCT_DCT) {
         idx_check = eob / 2;
-      } else if (strict_adst) {
+      }
+      else{
         idx_check = eob * 3 / 4;
-      } else {
-        idx_check = eob * 2 / 3;
       }
 
-      // 中文：根據 transform type 決定可接受的 abs(qcoeff) 上限；DCT_DCT 允許 3~14，一般 ADST / FLIPADST 允許 3~9，strict ADST 僅允許 3~7，以降低修改係數造成的失真風險 ; ENG: Select the acceptable abs(qcoeff) range based on transform type; DCT_DCT allows 3~14, regular ADST / FLIPADST allows 3~9, and strict ADST allows only 3~7 to reduce distortion risk
-      int max_abs_qcoeff;
 
-      if (tx_type == DCT_DCT) {
-        max_abs_qcoeff = 15;
-      } else if (strict_adst) {
-        max_abs_qcoeff = 8;
-      } else {
-        max_abs_qcoeff = 10;
-      }
-
-      // 中文：根據 transform type 決定每個 block 最多讀取的 hidden bit 數量；DCT_DCT 使用 eob/4 較積極，一般 ADST / FLIPADST 僅在 eob >= 16 時讀取 1 bit，必須與 Encode 端一致 ; ENG: Select the maximum number of hidden bits read per block based on transform type; DCT_DCT uses eob/4 more aggressively, while ADST / FLIPADST reads only 1 bit when eob >= 16, matching the encoder side
-      int max_hide_per_block;
-
-      if (tx_type == DCT_DCT) {
-        max_hide_per_block = eob/4;
-      } else {
-        max_hide_per_block = 0;
-        if (eob >= 16)
-          max_hide_per_block = 1;
-      }
+      // 中文：允許 3~14 以降低修改係數造成的失真風險 ; ENG: Select the acceptable abs(qcoeff) range 3~14 to reduce distortion risk
+      int max_abs_qcoeff = 15;
 
       for (int idx = eob - 1; idx > 1; idx--) {
          // 中文：若掃描位置已低於允許範圍，或此 transform type / eob 條件不允許讀取 hidden bit，則停止掃描 ; ENG: Stop scanning if the index leaves the allowed scan range or if this transform type / EOB condition does not allow hidden-bit reading
-        if (idx < idx_check || max_hide_per_block == 0) {
+        if (idx < idx_check) {
           break;
         }
 
-        // 中文：ratio 條件目前停用；若未來啟用，Encode 端也必須使用完全相同的 ratio 門檻，否則會發生讀寫位置不一致 ; ENG: The ratio condition is currently disabled; if enabled later, the encoder must use the exact same ratio threshold to avoid mismatched read/write positions
-        /*if (ratio < 0.3) {
+        if (ratio < 0.5) {
           break;
-        }*/
+        }
 
         const int pos = scan_order->scan[idx];
 
@@ -5595,3 +5586,4 @@ void av1_decode_tg_tiles_and_wrapup(AV1Decoder *pbi, const uint8_t *data,
     ++cm->current_frame.frame_number;
   }
 }
+
