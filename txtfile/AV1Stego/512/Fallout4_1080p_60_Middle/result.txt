@@ -1,0 +1,11 @@
+Folder 1: /home/mark/500GB/testdata/ori_video/Fallout4_1080p_60_Middle/Fallout4_1080p_60_Middle_hidden_test
+Folder 2: Fallout4_1080p_60_Middle_hidden_test
+圖片總數: 300
+有效比較數量: 300
+平均 PSNR（排除 inf）: 24.78 dB
+inf 數量: 240，佔比: 80.00%
+平均 SSIM: 0.97282
+平均 Edge Difference: 0.2257
+平均 Gradient Difference: 0.3955
+平均 FFT Difference: 270.4212
+平均 Color Shift: 0.7090

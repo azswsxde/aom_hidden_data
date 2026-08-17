@@ -1,0 +1,3 @@
+Using AOMedia Project AV1 Decoder v3.11.0
+Processed 150 frames.
+Play: ffplay -f rawvideo -pix_fmt yuv420p -s 1920x1080 speed_bag_1080p_30_Low_hidden_test.yuv

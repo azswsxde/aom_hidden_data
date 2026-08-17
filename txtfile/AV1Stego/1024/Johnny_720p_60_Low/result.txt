@@ -1,0 +1,11 @@
+Folder 1: /home/mark/500GB/testdata/ori_video/Johnny_720p_60_Low/Johnny_720p_60_Low_hidden_test
+Folder 2: Johnny_720p_60_Low_hidden_test
+圖片總數: 300
+有效比較數量: 300
+平均 PSNR（排除 inf）: 32.16 dB
+inf 數量: 0，佔比: 0.00%
+平均 SSIM: 0.97506
+平均 Edge Difference: 1.2503
+平均 Gradient Difference: 2.3759
+平均 FFT Difference: 1058.6563
+平均 Color Shift: 1.9818

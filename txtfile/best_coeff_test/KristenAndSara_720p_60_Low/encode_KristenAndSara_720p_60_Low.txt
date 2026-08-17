@@ -1,0 +1,1108 @@
+Using AOMedia Project AV1 Encoder v3.11.0
+[COEF_HIDE] eob 47, idx 29, dqcoeff -448, qcoeff -4, embedded 0, bit_index 1 / 83886104
+[COEF_HIDE] eob 47, idx 26, dqcoeff -560, qcoeff -5, embedded 1, bit_index 2 / 83886104
+[COEF_HIDE] eob 54, idx 37, dqcoeff -672, qcoeff -6, embedded 0, bit_index 3 / 83886104
+[COEF_HIDE] eob 54, idx 28, dqcoeff -448, qcoeff -4, embedded 0, bit_index 4 / 83886104
+[COEF_HIDE] eob 42, idx 26, dqcoeff -336, qcoeff -3, embedded 1, bit_index 5 / 83886104
+[COEF_HIDE] eob 44, idx 30, dqcoeff 448, qcoeff 4, embedded 0, bit_index 6 / 83886104
+[COEF_HIDE] eob 44, idx 26, dqcoeff -448, qcoeff -4, embedded 0, bit_index 7 / 83886104
+[COEF_HIDE] eob 91, idx 88, dqcoeff 336, qcoeff 3, embedded 1, bit_index 8 / 83886104
+[COEF_HIDE] eob 91, idx 65, dqcoeff 336, qcoeff 3, embedded 1, bit_index 9 / 83886104
+[COEF_HIDE] eob 61, idx 31, dqcoeff -448, qcoeff -4, embedded 0, bit_index 10 / 83886104
+[COEF_HIDE] eob 61, idx 30, dqcoeff -560, qcoeff -5, embedded 1, bit_index 11 / 83886104
+[COEF_HIDE] eob 96, idx 87, dqcoeff 336, qcoeff 3, embedded 1, bit_index 12 / 83886104
+[COEF_HIDE] eob 96, idx 69, dqcoeff -448, qcoeff -4, embedded 0, bit_index 13 / 83886104
+[COEF_HIDE] eob 84, idx 59, dqcoeff -448, qcoeff -4, embedded 0, bit_index 14 / 83886104
+[COEF_HIDE] eob 84, idx 51, dqcoeff 448, qcoeff 4, embedded 0, bit_index 15 / 83886104
+[COEF_HIDE] eob 82, idx 52, dqcoeff -672, qcoeff -6, embedded 0, bit_index 16 / 83886104
+[COEF_HIDE] eob 82, idx 45, dqcoeff -336, qcoeff -3, embedded 1, bit_index 17 / 83886104
+[COEF_HIDE] eob 61, idx 31, dqcoeff 336, qcoeff 3, embedded 1, bit_index 18 / 83886104
+[COEF_HIDE] eob 48, idx 39, dqcoeff -336, qcoeff -3, embedded 1, bit_index 19 / 83886104
+[COEF_HIDE] eob 48, idx 38, dqcoeff -336, qcoeff -3, embedded 1, bit_index 20 / 83886104
+[COEF_HIDE] eob 39, idx 21, dqcoeff -336, qcoeff -3, embedded 1, bit_index 21 / 83886104
+[COEF_HIDE] eob 64, idx 41, dqcoeff -336, qcoeff -3, embedded 1, bit_index 22 / 83886104
+[COEF_HIDE] eob 37, idx 20, dqcoeff 336, qcoeff 3, embedded 1, bit_index 23 / 83886104
+[COEF_HIDE] eob 38, idx 21, dqcoeff -336, qcoeff -3, embedded 1, bit_index 24 / 83886104
+[COEF_HIDE] eob 38, idx 20, dqcoeff -1120, qcoeff -10, embedded 0, bit_index 25 / 83886104
+[COEF_HIDE] eob 33, idx 16, dqcoeff -336, qcoeff -3, embedded 1, bit_index 26 / 83886104
+[COEF_HIDE] eob 33, idx 16, dqcoeff -336, qcoeff -3, embedded 1, bit_index 27 / 83886104
+K
+
+[COEF_HIDE] eob 32, idx 18, dqcoeff -448, qcoeff -4, embedded 0, bit_index 28 / 83886104
+[COEF_HIDE] eob 50, idx 41, dqcoeff -448, qcoeff -4, embedded 0, bit_index 29 / 83886104
+[COEF_HIDE] eob 50, idx 36, dqcoeff -448, qcoeff -4, embedded 0, bit_index 30 / 83886104
+[COEF_HIDE] eob 43, idx 26, dqcoeff -1008, qcoeff -9, embedded 1, bit_index 31 / 83886104
+[COEF_HIDE] eob 43, idx 25, dqcoeff -448, qcoeff -4, embedded 0, bit_index 32 / 83886104
+[COEF_HIDE] eob 44, idx 30, dqcoeff 336, qcoeff 3, embedded 1, bit_index 33 / 83886104
+[COEF_HIDE] eob 44, idx 26, dqcoeff -448, qcoeff -4, embedded 0, bit_index 34 / 83886104
+[COEF_HIDE] eob 39, idx 20, dqcoeff 336, qcoeff 3, embedded 1, bit_index 35 / 83886104
+[COEF_HIDE] eob 54, idx 37, dqcoeff -784, qcoeff -7, embedded 1, bit_index 36 / 83886104
+[COEF_HIDE] eob 54, idx 31, dqcoeff -448, qcoeff -4, embedded 0, bit_index 37 / 83886104
+[COEF_HIDE] eob 98, idx 62, dqcoeff -336, qcoeff -3, embedded 1, bit_index 38 / 83886104
+[COEF_HIDE] eob 117, idx 86, dqcoeff 336, qcoeff 3, embedded 1, bit_index 39 / 83886104
+[COEF_HIDE] eob 117, idx 69, dqcoeff -448, qcoeff -4, embedded 0, bit_index 40 / 83886104
+[COEF_HIDE] eob 84, idx 67, dqcoeff 448, qcoeff 4, embedded 0, bit_index 41 / 83886104
+[COEF_HIDE] eob 84, idx 59, dqcoeff -336, qcoeff -3, embedded 1, bit_index 42 / 83886104
+[COEF_HIDE] eob 60, idx 31, dqcoeff 448, qcoeff 4, embedded 0, bit_index 43 / 83886104
+[COEF_HIDE] eob 74, idx 52, dqcoeff -336, qcoeff -3, embedded 1, bit_index 44 / 83886104
+[COEF_HIDE] eob 74, idx 45, dqcoeff -336, qcoeff -3, embedded 1, bit_index 45 / 83886104
+[COEF_HIDE] eob 61, idx 31, dqcoeff 448, qcoeff 4, embedded 0, bit_index 46 / 83886104
+[COEF_HIDE] eob 46, idx 24, dqcoeff 448, qcoeff 4, embedded 0, bit_index 47 / 83886104
+[COEF_HIDE] eob 42, idx 26, dqcoeff 448, qcoeff 4, embedded 0, bit_index 48 / 83886104
+[COEF_HIDE] eob 42, idx 25, dqcoeff -336, qcoeff -3, embedded 1, bit_index 49 / 83886104
+[COEF_HIDE] eob 92, idx 51, dqcoeff -448, qcoeff -4, embedded 0, bit_index 50 / 83886104
+[COEF_HIDE] eob 92, idx 46, dqcoeff 448, qcoeff 4, embedded 0, bit_index 51 / 83886104
+[COEF_HIDE] eob 43, idx 26, dqcoeff 336, qcoeff 3, embedded 1, bit_index 52 / 83886104
+[COEF_HIDE] eob 37, idx 20, dqcoeff 448, qcoeff 4, embedded 0, bit_index 53 / 83886104
+[COEF_HIDE] eob 46, idx 31, dqcoeff 336, qcoeff 3, embedded 1, bit_index 54 / 83886104
+[COEF_HIDE] eob 38, idx 21, dqcoeff -336, qcoeff -3, embedded 1, bit_index 55 / 83886104
+[COEF_HIDE] eob 38, idx 20, dqcoeff -1120, qcoeff -10, embedded 0, bit_index 56 / 83886104
+[COEF_HIDE] eob 33, idx 26, dqcoeff 448, qcoeff 4, embedded 0, bit_index 57 / 83886104
+[COEF_HIDE] eob 33, idx 17, dqcoeff -448, qcoeff -4, embedded 0, bit_index 58 / 83886104
+[COEF_HIDE] eob 48, idx 30, dqcoeff 448, qcoeff 4, embedded 0, bit_index 59 / 83886104
+[COEF_HIDE] eob 48, idx 29, dqcoeff 336, qcoeff 3, embedded 1, bit_index 60 / 83886104
+[COEF_HIDE] eob 40, idx 20, dqcoeff 336, qcoeff 3, embedded 1, bit_index 61 / 83886104
+K
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+[COEF_HIDE] eob 44, idx 29, dqcoeff 324, qcoeff 4, embedded 0, bit_index 62 / 83886104
+[COEF_HIDE] eob 44, idx 26, dqcoeff -324, qcoeff -4, embedded 0, bit_index 63 / 83886104
+[COEF_HIDE] eob 125, idx 88, dqcoeff 324, qcoeff 4, embedded 0, bit_index 64 / 83886104
+[COEF_HIDE] eob 125, idx 86, dqcoeff 324, qcoeff 4, embedded 0, bit_index 65 / 83886104
+[COEF_HIDE] eob 32, idx 17, dqcoeff -243, qcoeff -3, embedded 1, bit_index 66 / 83886104
+[COEF_HIDE] eob 36, idx 23, dqcoeff 243, qcoeff 3, embedded 1, bit_index 67 / 83886104
+[COEF_HIDE] eob 36, idx 20, dqcoeff -405, qcoeff -5, embedded 1, bit_index 68 / 83886104
+[COEF_HIDE] eob 49, idx 37, dqcoeff -648, qcoeff -8, embedded 0, bit_index 69 / 83886104
+[COEF_HIDE] eob 49, idx 29, dqcoeff -243, qcoeff -3, embedded 1, bit_index 70 / 83886104
+[COEF_HIDE] eob 48, idx 39, dqcoeff -243, qcoeff -3, embedded 1, bit_index 71 / 83886104
+[COEF_HIDE] eob 48, idx 38, dqcoeff -324, qcoeff -4, embedded 0, bit_index 72 / 83886104
+[COEF_HIDE] eob 38, idx 28, dqcoeff -243, qcoeff -3, embedded 1, bit_index 73 / 83886104
+[COEF_HIDE] eob 38, idx 22, dqcoeff -324, qcoeff -4, embedded 0, bit_index 74 / 83886104
+[COEF_HIDE] eob 43, idx 29, dqcoeff 324, qcoeff 4, embedded 0, bit_index 75 / 83886104
+[COEF_HIDE] eob 125, idx 70, dqcoeff 405, qcoeff 5, embedded 1, bit_index 76 / 83886104
+[COEF_HIDE] eob 125, idx 66, dqcoeff 324, qcoeff 4, embedded 0, bit_index 77 / 83886104
+[COEF_HIDE] eob 70, idx 45, dqcoeff 243, qcoeff 3, embedded 1, bit_index 78 / 83886104
+[COEF_HIDE] eob 70, idx 44, dqcoeff -324, qcoeff -4, embedded 0, bit_index 79 / 83886104
+[COEF_HIDE] eob 121, idx 86, dqcoeff 324, qcoeff 4, embedded 0, bit_index 80 / 83886104
+[COEF_HIDE] eob 121, idx 69, dqcoeff -567, qcoeff -7, embedded 1, bit_index 81 / 83886104
+[COEF_HIDE] eob 127, idx 87, dqcoeff 648, qcoeff 8, embedded 0, bit_index 82 / 83886104
+[COEF_HIDE] eob 32, idx 17, dqcoeff 243, qcoeff 3, embedded 1, bit_index 83 / 83886104
+[COEF_HIDE] eob 45, idx 27, dqcoeff 243, qcoeff 3, embedded 1, bit_index 84 / 83886104
+[COEF_HIDE] eob 45, idx 26, dqcoeff 324, qcoeff 4, embedded 0, bit_index 85 / 83886104
+[COEF_HIDE] eob 54, idx 42, dqcoeff 324, qcoeff 4, embedded 0, bit_index 86 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff 648, qcoeff 8, embedded 0, bit_index 87 / 83886104
+[COEF_HIDE] eob 54, idx 42, dqcoeff -243, qcoeff -3, embedded 1, bit_index 88 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff -324, qcoeff -4, embedded 0, bit_index 89 / 83886104
+[COEF_HIDE] eob 146, idx 86, dqcoeff 243, qcoeff 3, embedded 1, bit_index 90 / 83886104
+[COEF_HIDE] eob 55, idx 39, dqcoeff -243, qcoeff -3, embedded 1, bit_index 91 / 83886104
+[COEF_HIDE] eob 55, idx 38, dqcoeff -405, qcoeff -5, embedded 1, bit_index 92 / 83886104
+[COEF_HIDE] eob 38, idx 36, dqcoeff 324, qcoeff 4, embedded 0, bit_index 93 / 83886104
+[COEF_HIDE] eob 38, idx 21, dqcoeff -486, qcoeff -6, embedded 0, bit_index 94 / 83886104
+[COEF_HIDE] eob 33, idx 18, dqcoeff 243, qcoeff 3, embedded 1, bit_index 95 / 83886104
+[COEF_HIDE] eob 36, idx 19, dqcoeff 324, qcoeff 4, embedded 0, bit_index 96 / 83886104
+[COEF_HIDE] eob 36, idx 18, dqcoeff 324, qcoeff 4, embedded 0, bit_index 97 / 83886104
+[COEF_HIDE] eob 46, idx 27, dqcoeff -243, qcoeff -3, embedded 1, bit_index 98 / 83886104
+[COEF_HIDE] eob 46, idx 32, dqcoeff 243, qcoeff 3, embedded 1, bit_index 99 / 83886104
+[COEF_HIDE] eob 61, idx 38, dqcoeff 243, qcoeff 3, embedded 1, bit_index 100 / 83886104
+[COEF_HIDE] eob 61, idx 30, dqcoeff -324, qcoeff -4, embedded 0, bit_index 101 / 83886104
+[COEF_HIDE] eob 53, idx 31, dqcoeff -324, qcoeff -4, embedded 0, bit_index 102 / 83886104
+[COEF_HIDE] eob 53, idx 30, dqcoeff -243, qcoeff -3, embedded 1, bit_index 103 / 83886104
+[COEF_HIDE] eob 108, idx 69, dqcoeff -243, qcoeff -3, embedded 1, bit_index 104 / 83886104
+[COEF_HIDE] eob 108, idx 61, dqcoeff 243, qcoeff 3, embedded 1, bit_index 105 / 83886104
+[COEF_HIDE] eob 53, idx 28, dqcoeff 324, qcoeff 4, embedded 0, bit_index 106 / 83886104
+[COEF_HIDE] eob 42, idx 25, dqcoeff 324, qcoeff 4, embedded 0, bit_index 107 / 83886104
+[COEF_HIDE] eob 45, idx 36, dqcoeff 243, qcoeff 3, embedded 1, bit_index 108 / 83886104
+[COEF_HIDE] eob 45, idx 26, dqcoeff 243, qcoeff 3, embedded 1, bit_index 109 / 83886104
+[COEF_HIDE] eob 41, idx 23, dqcoeff -324, qcoeff -4, embedded 0, bit_index 110 / 83886104
+[COEF_HIDE] eob 43, idx 22, dqcoeff -324, qcoeff -4, embedded 0, bit_index 111 / 83886104
+[COEF_HIDE] eob 43, idx 27, dqcoeff 567, qcoeff 7, embedded 1, bit_index 112 / 83886104
+[COEF_HIDE] eob 43, idx 26, dqcoeff -324, qcoeff -4, embedded 0, bit_index 113 / 83886104
+[COEF_HIDE] eob 61, idx 45, dqcoeff 324, qcoeff 4, embedded 0, bit_index 114 / 83886104
+[COEF_HIDE] eob 61, idx 30, dqcoeff 405, qcoeff 5, embedded 1, bit_index 115 / 83886104
+[COEF_HIDE] eob 56, idx 33, dqcoeff 243, qcoeff 3, embedded 1, bit_index 116 / 83886104
+[COEF_HIDE] eob 56, idx 29, dqcoeff 243, qcoeff 3, embedded 1, bit_index 117 / 83886104
+[COEF_HIDE] eob 36, idx 26, dqcoeff 243, qcoeff 3, embedded 1, bit_index 118 / 83886104
+[COEF_HIDE] eob 36, idx 19, dqcoeff 324, qcoeff 4, embedded 0, bit_index 119 / 83886104
+[COEF_HIDE] eob 41, idx 24, dqcoeff -324, qcoeff -4, embedded 0, bit_index 120 / 83886104
+K
+
+[COEF_HIDE] eob 41, idx 26, dqcoeff -324, qcoeff -4, embedded 0, bit_index 121 / 83886104
+[COEF_HIDE] eob 98, idx 75, dqcoeff 324, qcoeff 4, embedded 0, bit_index 122 / 83886104
+[COEF_HIDE] eob 98, idx 67, dqcoeff 324, qcoeff 4, embedded 0, bit_index 123 / 83886104
+[COEF_HIDE] eob 54, idx 29, dqcoeff -324, qcoeff -4, embedded 0, bit_index 124 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff 243, qcoeff 3, embedded 1, bit_index 125 / 83886104
+[COEF_HIDE] eob 128, idx 86, dqcoeff 243, qcoeff 3, embedded 1, bit_index 126 / 83886104
+[COEF_HIDE] eob 128, idx 65, dqcoeff 243, qcoeff 3, embedded 1, bit_index 127 / 83886104
+[COEF_HIDE] eob 45, idx 26, dqcoeff -324, qcoeff -4, embedded 0, bit_index 128 / 83886104
+[COEF_HIDE] eob 45, idx 25, dqcoeff -324, qcoeff -4, embedded 0, bit_index 129 / 83886104
+[COEF_HIDE] eob 47, idx 31, dqcoeff -243, qcoeff -3, embedded 1, bit_index 130 / 83886104
+[COEF_HIDE] eob 32, idx 29, dqcoeff -243, qcoeff -3, embedded 1, bit_index 131 / 83886104
+[COEF_HIDE] eob 32, idx 26, dqcoeff 324, qcoeff 4, embedded 0, bit_index 132 / 83886104
+[COEF_HIDE] eob 45, idx 30, dqcoeff 243, qcoeff 3, embedded 1, bit_index 133 / 83886104
+[COEF_HIDE] eob 45, idx 25, dqcoeff -405, qcoeff -5, embedded 1, bit_index 134 / 83886104
+[COEF_HIDE] eob 44, idx 28, dqcoeff -243, qcoeff -3, embedded 1, bit_index 135 / 83886104
+[COEF_HIDE] eob 44, idx 27, dqcoeff -243, qcoeff -3, embedded 1, bit_index 136 / 83886104
+[COEF_HIDE] eob 40, idx 23, dqcoeff 243, qcoeff 3, embedded 1, bit_index 137 / 83886104
+[COEF_HIDE] eob 35, idx 19, dqcoeff 243, qcoeff 3, embedded 1, bit_index 138 / 83886104
+[COEF_HIDE] eob 43, idx 27, dqcoeff 405, qcoeff 5, embedded 1, bit_index 139 / 83886104
+[COEF_HIDE] eob 33, idx 16, dqcoeff -324, qcoeff -4, embedded 0, bit_index 140 / 83886104
+[COEF_HIDE] eob 43, idx 29, dqcoeff 324, qcoeff 4, embedded 0, bit_index 141 / 83886104
+[COEF_HIDE] eob 45, idx 26, dqcoeff 324, qcoeff 4, embedded 0, bit_index 142 / 83886104
+[COEF_HIDE] eob 154, idx 118, dqcoeff 324, qcoeff 4, embedded 0, bit_index 143 / 83886104
+[COEF_HIDE] eob 154, idx 92, dqcoeff -324, qcoeff -4, embedded 0, bit_index 144 / 83886104
+[COEF_HIDE] eob 33, idx 24, dqcoeff -243, qcoeff -3, embedded 1, bit_index 145 / 83886104
+[COEF_HIDE] eob 33, idx 17, dqcoeff 243, qcoeff 3, embedded 1, bit_index 146 / 83886104
+[COEF_HIDE] eob 32, idx 16, dqcoeff -243, qcoeff -3, embedded 1, bit_index 147 / 83886104
+[COEF_HIDE] eob 45, idx 28, dqcoeff 324, qcoeff 4, embedded 0, bit_index 148 / 83886104
+[COEF_HIDE] eob 54, idx 42, dqcoeff -324, qcoeff -4, embedded 0, bit_index 149 / 83886104
+[COEF_HIDE] eob 54, idx 41, dqcoeff 243, qcoeff 3, embedded 1, bit_index 150 / 83886104
+[COEF_HIDE] eob 35, idx 17, dqcoeff -243, qcoeff -3, embedded 1, bit_index 151 / 83886104
+[COEF_HIDE] eob 41, idx 20, dqcoeff -243, qcoeff -3, embedded 1, bit_index 152 / 83886104
+[COEF_HIDE] eob 61, idx 45, dqcoeff -243, qcoeff -3, embedded 1, bit_index 153 / 83886104
+[COEF_HIDE] eob 61, idx 31, dqcoeff 243, qcoeff 3, embedded 1, bit_index 154 / 83886104
+[COEF_HIDE] eob 43, idx 28, dqcoeff 324, qcoeff 4, embedded 0, bit_index 155 / 83886104
+[COEF_HIDE] eob 43, idx 27, dqcoeff 324, qcoeff 4, embedded 0, bit_index 156 / 83886104
+[COEF_HIDE] eob 37, idx 34, dqcoeff 324, qcoeff 4, embedded 0, bit_index 157 / 83886104
+[COEF_HIDE] eob 54, idx 39, dqcoeff -324, qcoeff -4, embedded 0, bit_index 158 / 83886104
+[COEF_HIDE] eob 54, idx 38, dqcoeff -324, qcoeff -4, embedded 0, bit_index 159 / 83886104
+[COEF_HIDE] eob 32, idx 23, dqcoeff -405, qcoeff -5, embedded 1, bit_index 160 / 83886104
+[COEF_HIDE] eob 99, idx 50, dqcoeff 243, qcoeff 3, embedded 1, bit_index 161 / 83886104
+[COEF_HIDE] eob 129, idx 71, dqcoeff -324, qcoeff -4, embedded 0, bit_index 162 / 83886104
+[COEF_HIDE] eob 33, idx 25, dqcoeff 243, qcoeff 3, embedded 1, bit_index 163 / 83886104
+[COEF_HIDE] eob 32, idx 16, dqcoeff 324, qcoeff 4, embedded 0, bit_index 164 / 83886104
+[COEF_HIDE] eob 94, idx 54, dqcoeff 324, qcoeff 4, embedded 0, bit_index 165 / 83886104
+[COEF_HIDE] eob 94, idx 53, dqcoeff 567, qcoeff 7, embedded 1, bit_index 166 / 83886104
+[COEF_HIDE] eob 42, idx 31, dqcoeff -324, qcoeff -4, embedded 0, bit_index 167 / 83886104
+[COEF_HIDE] eob 45, idx 36, dqcoeff 324, qcoeff 4, embedded 0, bit_index 168 / 83886104
+[COEF_HIDE] eob 45, idx 26, dqcoeff 324, qcoeff 4, embedded 0, bit_index 169 / 83886104
+[COEF_HIDE] eob 43, idx 23, dqcoeff -243, qcoeff -3, embedded 1, bit_index 170 / 83886104
+[COEF_HIDE] eob 45, idx 25, dqcoeff -243, qcoeff -3, embedded 1, bit_index 171 / 83886104
+[COEF_HIDE] eob 47, idx 24, dqcoeff 324, qcoeff 4, embedded 0, bit_index 172 / 83886104
+[COEF_HIDE] eob 63, idx 33, dqcoeff 243, qcoeff 3, embedded 1, bit_index 173 / 83886104
+[COEF_HIDE] eob 36, idx 19, dqcoeff 324, qcoeff 4, embedded 0, bit_index 174 / 83886104
+[COEF_HIDE] eob 36, idx 18, dqcoeff 243, qcoeff 3, embedded 1, bit_index 175 / 83886104
+[COEF_HIDE] eob 49, idx 26, dqcoeff 405, qcoeff 5, embedded 1, bit_index 176 / 83886104
+[COEF_HIDE] eob 40, idx 30, dqcoeff -243, qcoeff -3, embedded 1, bit_index 177 / 83886104
+[COEF_HIDE] eob 40, idx 29, dqcoeff 324, qcoeff 4, embedded 0, bit_index 178 / 83886104
+[COEF_HIDE] eob 126, idx 124, dqcoeff 243, qcoeff 3, embedded 1, bit_index 179 / 83886104
+K
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+[COEF_HIDE] eob 48, idx 38, dqcoeff -376, qcoeff -4, embedded 0, bit_index 180 / 83886104
+[COEF_HIDE] eob 48, idx 37, dqcoeff -282, qcoeff -3, embedded 1, bit_index 181 / 83886104
+[COEF_HIDE] eob 54, idx 29, dqcoeff -282, qcoeff -3, embedded 1, bit_index 182 / 83886104
+[COEF_HIDE] eob 57, idx 42, dqcoeff 376, qcoeff 4, embedded 0, bit_index 183 / 83886104
+[COEF_HIDE] eob 57, idx 30, dqcoeff 282, qcoeff 3, embedded 1, bit_index 184 / 83886104
+[COEF_HIDE] eob 54, idx 31, dqcoeff 376, qcoeff 4, embedded 0, bit_index 185 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff -376, qcoeff -4, embedded 0, bit_index 186 / 83886104
+[COEF_HIDE] eob 44, idx 26, dqcoeff 282, qcoeff 3, embedded 1, bit_index 187 / 83886104
+[COEF_HIDE] eob 57, idx 40, dqcoeff 376, qcoeff 4, embedded 0, bit_index 188 / 83886104
+[COEF_HIDE] eob 57, idx 37, dqcoeff -564, qcoeff -6, embedded 0, bit_index 189 / 83886104
+[COEF_HIDE] eob 37, idx 21, dqcoeff 470, qcoeff 5, embedded 1, bit_index 190 / 83886104
+[COEF_HIDE] eob 37, idx 19, dqcoeff 282, qcoeff 3, embedded 1, bit_index 191 / 83886104
+[COEF_HIDE] eob 43, idx 24, dqcoeff 376, qcoeff 4, embedded 0, bit_index 192 / 83886104
+[COEF_HIDE] eob 43, idx 22, dqcoeff -376, qcoeff -4, embedded 0, bit_index 193 / 83886104
+[COEF_HIDE] eob 45, idx 24, dqcoeff 376, qcoeff 4, embedded 0, bit_index 194 / 83886104
+[COEF_HIDE] eob 36, idx 22, dqcoeff -376, qcoeff -4, embedded 0, bit_index 195 / 83886104
+[COEF_HIDE] eob 36, idx 21, dqcoeff -282, qcoeff -3, embedded 1, bit_index 196 / 83886104
+[COEF_HIDE] eob 98, idx 62, dqcoeff -470, qcoeff -5, embedded 1, bit_index 197 / 83886104
+[COEF_HIDE] eob 118, idx 87, dqcoeff 376, qcoeff 4, embedded 0, bit_index 198 / 83886104
+[COEF_HIDE] eob 118, idx 69, dqcoeff -564, qcoeff -6, embedded 0, bit_index 199 / 83886104
+[COEF_HIDE] eob 33, idx 17, dqcoeff 282, qcoeff 3, embedded 1, bit_index 200 / 83886104
+[COEF_HIDE] eob 46, idx 27, dqcoeff 470, qcoeff 5, embedded 1, bit_index 201 / 83886104
+[COEF_HIDE] eob 54, idx 42, dqcoeff -376, qcoeff -4, embedded 0, bit_index 202 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff -376, qcoeff -4, embedded 0, bit_index 203 / 83886104
+[COEF_HIDE] eob 44, idx 29, dqcoeff 376, qcoeff 4, embedded 0, bit_index 204 / 83886104
+[COEF_HIDE] eob 44, idx 28, dqcoeff -282, qcoeff -3, embedded 1, bit_index 205 / 83886104
+[COEF_HIDE] eob 128, idx 69, dqcoeff -282, qcoeff -3, embedded 1, bit_index 206 / 83886104
+[COEF_HIDE] eob 52, idx 26, dqcoeff -376, qcoeff -4, embedded 0, bit_index 207 / 83886104
+[COEF_HIDE] eob 73, idx 41, dqcoeff -376, qcoeff -4, embedded 0, bit_index 208 / 83886104
+[COEF_HIDE] eob 54, idx 41, dqcoeff 470, qcoeff 5, embedded 1, bit_index 209 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff -282, qcoeff -3, embedded 1, bit_index 210 / 83886104
+[COEF_HIDE] eob 42, idx 26, dqcoeff 282, qcoeff 3, embedded 1, bit_index 211 / 83886104
+[COEF_HIDE] eob 33, idx 18, dqcoeff 282, qcoeff 3, embedded 1, bit_index 212 / 83886104
+[COEF_HIDE] eob 33, idx 17, dqcoeff -376, qcoeff -4, embedded 0, bit_index 213 / 83886104
+[COEF_HIDE] eob 36, idx 19, dqcoeff 376, qcoeff 4, embedded 0, bit_index 214 / 83886104
+[COEF_HIDE] eob 36, idx 18, dqcoeff 282, qcoeff 3, embedded 1, bit_index 215 / 83886104
+[COEF_HIDE] eob 48, idx 30, dqcoeff 376, qcoeff 4, embedded 0, bit_index 216 / 83886104
+[COEF_HIDE] eob 48, idx 29, dqcoeff 376, qcoeff 4, embedded 0, bit_index 217 / 83886104
+[COEF_HIDE] eob 38, idx 22, dqcoeff 376, qcoeff 4, embedded 0, bit_index 218 / 83886104
+K
+
+[COEF_HIDE] eob 42, idx 31, dqcoeff 376, qcoeff 4, embedded 0, bit_index 219 / 83886104
+[COEF_HIDE] eob 42, idx 25, dqcoeff 376, qcoeff 4, embedded 0, bit_index 220 / 83886104
+[COEF_HIDE] eob 32, idx 25, dqcoeff -282, qcoeff -3, embedded 1, bit_index 221 / 83886104
+[COEF_HIDE] eob 32, idx 21, dqcoeff 282, qcoeff 3, embedded 1, bit_index 222 / 83886104
+[COEF_HIDE] eob 121, idx 63, dqcoeff -282, qcoeff -3, embedded 1, bit_index 223 / 83886104
+[COEF_HIDE] eob 44, idx 30, dqcoeff 376, qcoeff 4, embedded 0, bit_index 224 / 83886104
+[COEF_HIDE] eob 44, idx 25, dqcoeff 282, qcoeff 3, embedded 1, bit_index 225 / 83886104
+[COEF_HIDE] eob 42, idx 27, dqcoeff -376, qcoeff -4, embedded 0, bit_index 226 / 83886104
+[COEF_HIDE] eob 32, idx 26, dqcoeff 376, qcoeff 4, embedded 0, bit_index 227 / 83886104
+[COEF_HIDE] eob 46, idx 25, dqcoeff 376, qcoeff 4, embedded 0, bit_index 228 / 83886104
+[COEF_HIDE] eob 32, idx 23, dqcoeff 376, qcoeff 4, embedded 0, bit_index 229 / 83886104
+[COEF_HIDE] eob 44, idx 32, dqcoeff 282, qcoeff 3, embedded 1, bit_index 230 / 83886104
+[COEF_HIDE] eob 44, idx 27, dqcoeff -376, qcoeff -4, embedded 0, bit_index 231 / 83886104
+[COEF_HIDE] eob 61, idx 45, dqcoeff 282, qcoeff 3, embedded 1, bit_index 232 / 83886104
+[COEF_HIDE] eob 61, idx 44, dqcoeff -282, qcoeff -3, embedded 1, bit_index 233 / 83886104
+[COEF_HIDE] eob 59, idx 45, dqcoeff 470, qcoeff 5, embedded 1, bit_index 234 / 83886104
+[COEF_HIDE] eob 59, idx 37, dqcoeff -282, qcoeff -3, embedded 1, bit_index 235 / 83886104
+[COEF_HIDE] eob 32, idx 23, dqcoeff -376, qcoeff -4, embedded 0, bit_index 236 / 83886104
+[COEF_HIDE] eob 32, idx 16, dqcoeff 470, qcoeff 5, embedded 1, bit_index 237 / 83886104
+[COEF_HIDE] eob 48, idx 27, dqcoeff 376, qcoeff 4, embedded 0, bit_index 238 / 83886104
+[COEF_HIDE] eob 48, idx 26, dqcoeff -376, qcoeff -4, embedded 0, bit_index 239 / 83886104
+[COEF_HIDE] eob 33, idx 16, dqcoeff -376, qcoeff -4, embedded 0, bit_index 240 / 83886104
+[COEF_HIDE] eob 44, idx 27, dqcoeff 470, qcoeff 5, embedded 1, bit_index 241 / 83886104
+[COEF_HIDE] eob 47, idx 36, dqcoeff -376, qcoeff -4, embedded 0, bit_index 242 / 83886104
+[COEF_HIDE] eob 47, idx 35, dqcoeff -282, qcoeff -3, embedded 1, bit_index 243 / 83886104
+[COEF_HIDE] eob 44, idx 29, dqcoeff 282, qcoeff 3, embedded 1, bit_index 244 / 83886104
+[COEF_HIDE] eob 44, idx 28, dqcoeff -282, qcoeff -3, embedded 1, bit_index 245 / 83886104
+[COEF_HIDE] eob 128, idx 69, dqcoeff -376, qcoeff -4, embedded 0, bit_index 246 / 83886104
+[COEF_HIDE] eob 32, idx 19, dqcoeff -282, qcoeff -3, embedded 1, bit_index 247 / 83886104
+[COEF_HIDE] eob 39, idx 20, dqcoeff -376, qcoeff -4, embedded 0, bit_index 248 / 83886104
+[COEF_HIDE] eob 46, idx 24, dqcoeff 376, qcoeff 4, embedded 0, bit_index 249 / 83886104
+[COEF_HIDE] eob 40, idx 22, dqcoeff 376, qcoeff 4, embedded 0, bit_index 250 / 83886104
+[COEF_HIDE] eob 84, idx 50, dqcoeff 376, qcoeff 4, embedded 0, bit_index 251 / 83886104
+[COEF_HIDE] eob 84, idx 43, dqcoeff -282, qcoeff -3, embedded 1, bit_index 252 / 83886104
+[COEF_HIDE] eob 144, idx 95, dqcoeff 282, qcoeff 3, embedded 1, bit_index 253 / 83886104
+[COEF_HIDE] eob 144, idx 84, dqcoeff -282, qcoeff -3, embedded 1, bit_index 254 / 83886104
+[COEF_HIDE] eob 34, idx 18, dqcoeff 282, qcoeff 3, embedded 1, bit_index 255 / 83886104
+[COEF_HIDE] eob 73, idx 41, dqcoeff -282, qcoeff -3, embedded 1, bit_index 256 / 83886104
+[COEF_HIDE] eob 73, idx 40, dqcoeff -376, qcoeff -4, embedded 0, bit_index 257 / 83886104
+[COEF_HIDE] eob 55, idx 40, dqcoeff 376, qcoeff 4, embedded 0, bit_index 258 / 83886104
+[COEF_HIDE] eob 55, idx 38, dqcoeff 376, qcoeff 4, embedded 0, bit_index 259 / 83886104
+[COEF_HIDE] eob 54, idx 41, dqcoeff 564, qcoeff 6, embedded 0, bit_index 260 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff -282, qcoeff -3, embedded 1, bit_index 261 / 83886104
+[COEF_HIDE] eob 60, idx 43, dqcoeff 282, qcoeff 3, embedded 1, bit_index 262 / 83886104
+[COEF_HIDE] eob 43, idx 25, dqcoeff 376, qcoeff 4, embedded 0, bit_index 263 / 83886104
+[COEF_HIDE] eob 35, idx 20, dqcoeff 282, qcoeff 3, embedded 1, bit_index 264 / 83886104
+[COEF_HIDE] eob 36, idx 19, dqcoeff 282, qcoeff 3, embedded 1, bit_index 265 / 83886104
+[COEF_HIDE] eob 36, idx 18, dqcoeff 376, qcoeff 4, embedded 0, bit_index 266 / 83886104
+[COEF_HIDE] eob 38, idx 21, dqcoeff 376, qcoeff 4, embedded 0, bit_index 267 / 83886104
+[COEF_HIDE] eob 72, idx 41, dqcoeff 282, qcoeff 3, embedded 1, bit_index 268 / 83886104
+K
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+[COEF_HIDE] eob 120, idx 70, dqcoeff 284, qcoeff 4, embedded 0, bit_index 269 / 83886104
+[COEF_HIDE] eob 41, idx 28, dqcoeff -213, qcoeff -3, embedded 1, bit_index 270 / 83886104
+[COEF_HIDE] eob 41, idx 21, dqcoeff 497, qcoeff 7, embedded 1, bit_index 271 / 83886104
+[COEF_HIDE] eob 45, idx 26, dqcoeff -284, qcoeff -4, embedded 0, bit_index 272 / 83886104
+[COEF_HIDE] eob 45, idx 25, dqcoeff -213, qcoeff -3, embedded 1, bit_index 273 / 83886104
+[COEF_HIDE] eob 48, idx 39, dqcoeff -213, qcoeff -3, embedded 1, bit_index 274 / 83886104
+[COEF_HIDE] eob 48, idx 38, dqcoeff -213, qcoeff -3, embedded 1, bit_index 275 / 83886104
+[COEF_HIDE] eob 41, idx 25, dqcoeff -284, qcoeff -4, embedded 0, bit_index 276 / 83886104
+[COEF_HIDE] eob 43, idx 27, dqcoeff -284, qcoeff -4, embedded 0, bit_index 277 / 83886104
+[COEF_HIDE] eob 124, idx 94, dqcoeff 213, qcoeff 3, embedded 1, bit_index 278 / 83886104
+[COEF_HIDE] eob 124, idx 86, dqcoeff -284, qcoeff -4, embedded 0, bit_index 279 / 83886104
+[COEF_HIDE] eob 44, idx 30, dqcoeff -213, qcoeff -3, embedded 1, bit_index 280 / 83886104
+[COEF_HIDE] eob 44, idx 26, dqcoeff 213, qcoeff 3, embedded 1, bit_index 281 / 83886104
+[COEF_HIDE] eob 32, idx 25, dqcoeff 213, qcoeff 3, embedded 1, bit_index 282 / 83886104
+[COEF_HIDE] eob 32, idx 17, dqcoeff -213, qcoeff -3, embedded 1, bit_index 283 / 83886104
+[COEF_HIDE] eob 153, idx 86, dqcoeff -213, qcoeff -3, embedded 1, bit_index 284 / 83886104
+[COEF_HIDE] eob 33, idx 24, dqcoeff -213, qcoeff -3, embedded 1, bit_index 285 / 83886104
+[COEF_HIDE] eob 33, idx 17, dqcoeff 213, qcoeff 3, embedded 1, bit_index 286 / 83886104
+[COEF_HIDE] eob 48, idx 41, dqcoeff -284, qcoeff -4, embedded 0, bit_index 287 / 83886104
+[COEF_HIDE] eob 48, idx 27, dqcoeff 497, qcoeff 7, embedded 1, bit_index 288 / 83886104
+[COEF_HIDE] eob 40, idx 23, dqcoeff -284, qcoeff -4, embedded 0, bit_index 289 / 83886104
+[COEF_HIDE] eob 55, idx 39, dqcoeff 213, qcoeff 3, embedded 1, bit_index 290 / 83886104
+[COEF_HIDE] eob 55, idx 32, dqcoeff 284, qcoeff 4, embedded 0, bit_index 291 / 83886104
+[COEF_HIDE] eob 47, idx 35, dqcoeff 426, qcoeff 6, embedded 0, bit_index 292 / 83886104
+[COEF_HIDE] eob 47, idx 30, dqcoeff -284, qcoeff -4, embedded 0, bit_index 293 / 83886104
+[COEF_HIDE] eob 39, idx 22, dqcoeff -284, qcoeff -4, embedded 0, bit_index 294 / 83886104
+[COEF_HIDE] eob 39, idx 21, dqcoeff -355, qcoeff -5, embedded 1, bit_index 295 / 83886104
+[COEF_HIDE] eob 43, idx 40, dqcoeff -284, qcoeff -4, embedded 0, bit_index 296 / 83886104
+[COEF_HIDE] eob 43, idx 26, dqcoeff 284, qcoeff 4, embedded 0, bit_index 297 / 83886104
+[COEF_HIDE] eob 45, idx 27, dqcoeff -213, qcoeff -3, embedded 1, bit_index 298 / 83886104
+[COEF_HIDE] eob 45, idx 36, dqcoeff 284, qcoeff 4, embedded 0, bit_index 299 / 83886104
+[COEF_HIDE] eob 45, idx 26, dqcoeff 355, qcoeff 5, embedded 1, bit_index 300 / 83886104
+[COEF_HIDE] eob 46, idx 29, dqcoeff 497, qcoeff 7, embedded 1, bit_index 301 / 83886104
+[COEF_HIDE] eob 46, idx 28, dqcoeff -284, qcoeff -4, embedded 0, bit_index 302 / 83886104
+[COEF_HIDE] eob 45, idx 23, dqcoeff -284, qcoeff -4, embedded 0, bit_index 303 / 83886104
+[COEF_HIDE] eob 32, idx 23, dqcoeff -284, qcoeff -4, embedded 0, bit_index 304 / 83886104
+[COEF_HIDE] eob 37, idx 22, dqcoeff 213, qcoeff 3, embedded 1, bit_index 305 / 83886104
+[COEF_HIDE] eob 37, idx 21, dqcoeff 284, qcoeff 4, embedded 0, bit_index 306 / 83886104
+K
+
+[COEF_HIDE] eob 43, idx 31, dqcoeff 213, qcoeff 3, embedded 1, bit_index 307 / 83886104
+[COEF_HIDE] eob 43, idx 27, dqcoeff 284, qcoeff 4, embedded 0, bit_index 308 / 83886104
+[COEF_HIDE] eob 37, idx 24, dqcoeff -284, qcoeff -4, embedded 0, bit_index 309 / 83886104
+[COEF_HIDE] eob 37, idx 20, dqcoeff -497, qcoeff -7, embedded 1, bit_index 310 / 83886104
+[COEF_HIDE] eob 45, idx 31, dqcoeff 284, qcoeff 4, embedded 0, bit_index 311 / 83886104
+[COEF_HIDE] eob 45, idx 26, dqcoeff 213, qcoeff 3, embedded 1, bit_index 312 / 83886104
+[COEF_HIDE] eob 44, idx 31, dqcoeff 355, qcoeff 5, embedded 1, bit_index 313 / 83886104
+[COEF_HIDE] eob 44, idx 30, dqcoeff 213, qcoeff 3, embedded 1, bit_index 314 / 83886104
+[COEF_HIDE] eob 154, idx 88, dqcoeff 213, qcoeff 3, embedded 1, bit_index 315 / 83886104
+[COEF_HIDE] eob 154, idx 86, dqcoeff 284, qcoeff 4, embedded 0, bit_index 316 / 83886104
+[COEF_HIDE] eob 44, idx 42, dqcoeff -284, qcoeff -4, embedded 0, bit_index 317 / 83886104
+[COEF_HIDE] eob 44, idx 30, dqcoeff 284, qcoeff 4, embedded 0, bit_index 318 / 83886104
+[COEF_HIDE] eob 47, idx 26, dqcoeff -213, qcoeff -3, embedded 1, bit_index 319 / 83886104
+[COEF_HIDE] eob 47, idx 23, dqcoeff -284, qcoeff -4, embedded 0, bit_index 320 / 83886104
+[COEF_HIDE] eob 42, idx 23, dqcoeff 213, qcoeff 3, embedded 1, bit_index 321 / 83886104
+[COEF_HIDE] eob 41, idx 24, dqcoeff 284, qcoeff 4, embedded 0, bit_index 322 / 83886104
+[COEF_HIDE] eob 34, idx 24, dqcoeff 284, qcoeff 4, embedded 0, bit_index 323 / 83886104
+[COEF_HIDE] eob 34, idx 19, dqcoeff -213, qcoeff -3, embedded 1, bit_index 324 / 83886104
+[COEF_HIDE] eob 43, idx 29, dqcoeff 284, qcoeff 4, embedded 0, bit_index 325 / 83886104
+[COEF_HIDE] eob 43, idx 29, dqcoeff -284, qcoeff -4, embedded 0, bit_index 326 / 83886104
+[COEF_HIDE] eob 149, idx 87, dqcoeff 213, qcoeff 3, embedded 1, bit_index 327 / 83886104
+[COEF_HIDE] eob 61, idx 45, dqcoeff 213, qcoeff 3, embedded 1, bit_index 328 / 83886104
+[COEF_HIDE] eob 61, idx 44, dqcoeff -284, qcoeff -4, embedded 0, bit_index 329 / 83886104
+[COEF_HIDE] eob 70, idx 53, dqcoeff 284, qcoeff 4, embedded 0, bit_index 330 / 83886104
+[COEF_HIDE] eob 70, idx 52, dqcoeff -497, qcoeff -7, embedded 1, bit_index 331 / 83886104
+[COEF_HIDE] eob 36, idx 26, dqcoeff -213, qcoeff -3, embedded 1, bit_index 332 / 83886104
+[COEF_HIDE] eob 44, idx 30, dqcoeff -284, qcoeff -4, embedded 0, bit_index 333 / 83886104
+[COEF_HIDE] eob 44, idx 26, dqcoeff 284, qcoeff 4, embedded 0, bit_index 334 / 83886104
+[COEF_HIDE] eob 45, idx 30, dqcoeff -284, qcoeff -4, embedded 0, bit_index 335 / 83886104
+[COEF_HIDE] eob 45, idx 25, dqcoeff -284, qcoeff -4, embedded 0, bit_index 336 / 83886104
+[COEF_HIDE] eob 54, idx 31, dqcoeff -284, qcoeff -4, embedded 0, bit_index 337 / 83886104
+[COEF_HIDE] eob 54, idx 30, dqcoeff -213, qcoeff -3, embedded 1, bit_index 338 / 83886104
+[COEF_HIDE] eob 48, idx 42, dqcoeff -213, qcoeff -3, embedded 1, bit_index 339 / 83886104
+[COEF_HIDE] eob 48, idx 41, dqcoeff -213, qcoeff -3, embedded 1, bit_index 340 / 83886104
+[COEF_HIDE] eob 47, idx 35, dqcoeff 213, qcoeff 3, embedded 1, bit_index 341 / 83886104
+[COEF_HIDE] eob 51, idx 32, dqcoeff -284, qcoeff -4, embedded 0, bit_index 342 / 83886104
+[COEF_HIDE] eob 44, idx 41, dqcoeff -213, qcoeff -3, embedded 1, bit_index 343 / 83886104
+[COEF_HIDE] eob 44, idx 27, dqcoeff 568, qcoeff 8, embedded 0, bit_index 344 / 83886104
+[COEF_HIDE] eob 54, idx 42, dqcoeff -284, qcoeff -4, embedded 0, bit_index 345 / 83886104
+[COEF_HIDE] eob 54, idx 30, dqcoeff 284, qcoeff 4, embedded 0, bit_index 346 / 83886104
+[COEF_HIDE] eob 68, idx 45, dqcoeff -213, qcoeff -3, embedded 1, bit_index 347 / 83886104
+[COEF_HIDE] eob 82, idx 55, dqcoeff 284, qcoeff 4, embedded 0, bit_index 348 / 83886104
+[COEF_HIDE] eob 82, idx 51, dqcoeff -284, qcoeff -4, embedded 0, bit_index 349 / 83886104
+[COEF_HIDE] eob 41, idx 36, dqcoeff 284, qcoeff 4, embedded 0, bit_index 350 / 83886104
+[COEF_HIDE] eob 41, idx 26, dqcoeff -426, qcoeff -6, embedded 0, bit_index 351 / 83886104
+[COEF_HIDE] eob 49, idx 32, dqcoeff 213, qcoeff 3, embedded 1, bit_index 352 / 83886104
+[COEF_HIDE] eob 40, idx 22, dqcoeff -284, qcoeff -4, embedded 0, bit_index 353 / 83886104
+[COEF_HIDE] eob 40, idx 20, dqcoeff 213, qcoeff 3, embedded 1, bit_index 354 / 83886104
+[COEF_HIDE] eob 54, idx 41, dqcoeff 355, qcoeff 5, embedded 1, bit_index 355 / 83886104
+[COEF_HIDE] eob 54, idx 31, dqcoeff -284, qcoeff -4, embedded 0, bit_index 356 / 83886104
+[COEF_HIDE] eob 41, idx 23, dqcoeff -213, qcoeff -3, embedded 1, bit_index 357 / 83886104
+[COEF_HIDE] eob 48, idx 33, dqcoeff 213, qcoeff 3, embedded 1, bit_index 358 / 83886104
+[COEF_HIDE] eob 56, idx 31, dqcoeff -213, qcoeff -3, embedded 1, bit_index 359 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff 213, qcoeff 3, embedded 1, bit_index 360 / 83886104
+[COEF_HIDE] eob 40, idx 23, dqcoeff -355, qcoeff -5, embedded 1, bit_index 361 / 83886104
+[COEF_HIDE] eob 46, idx 27, dqcoeff 213, qcoeff 3, embedded 1, bit_index 362 / 83886104
+[COEF_HIDE] eob 46, idx 25, dqcoeff -213, qcoeff -3, embedded 1, bit_index 363 / 83886104
+[COEF_HIDE] eob 53, idx 35, dqcoeff 213, qcoeff 3, embedded 1, bit_index 364 / 83886104
+[COEF_HIDE] eob 53, idx 30, dqcoeff 213, qcoeff 3, embedded 1, bit_index 365 / 83886104
+[COEF_HIDE] eob 32, idx 29, dqcoeff -284, qcoeff -4, embedded 0, bit_index 366 / 83886104
+[COEF_HIDE] eob 32, idx 16, dqcoeff -284, qcoeff -4, embedded 0, bit_index 367 / 83886104
+K
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+[COEF_HIDE] eob 56, idx 39, dqcoeff -225, qcoeff -3, embedded 1, bit_index 368 / 83886104
+[COEF_HIDE] eob 56, idx 38, dqcoeff -225, qcoeff -3, embedded 1, bit_index 369 / 83886104
+[COEF_HIDE] eob 42, idx 31, dqcoeff 225, qcoeff 3, embedded 1, bit_index 370 / 83886104
+[COEF_HIDE] eob 42, idx 27, dqcoeff 375, qcoeff 5, embedded 1, bit_index 371 / 83886104
+[COEF_HIDE] eob 37, idx 35, dqcoeff 300, qcoeff 4, embedded 0, bit_index 372 / 83886104
+[COEF_HIDE] eob 37, idx 34, dqcoeff 300, qcoeff 4, embedded 0, bit_index 373 / 83886104
+[COEF_HIDE] eob 33, idx 24, dqcoeff -300, qcoeff -4, embedded 0, bit_index 374 / 83886104
+[COEF_HIDE] eob 33, idx 18, dqcoeff -375, qcoeff -5, embedded 1, bit_index 375 / 83886104
+[COEF_HIDE] eob 48, idx 37, dqcoeff -525, qcoeff -7, embedded 1, bit_index 376 / 83886104
+[COEF_HIDE] eob 48, idx 32, dqcoeff 300, qcoeff 4, embedded 0, bit_index 377 / 83886104
+[COEF_HIDE] eob 42, idx 24, dqcoeff 225, qcoeff 3, embedded 1, bit_index 378 / 83886104
+[COEF_HIDE] eob 42, idx 23, dqcoeff 300, qcoeff 4, embedded 0, bit_index 379 / 83886104
+[COEF_HIDE] eob 43, idx 29, dqcoeff 300, qcoeff 4, embedded 0, bit_index 380 / 83886104
+[COEF_HIDE] eob 44, idx 42, dqcoeff -300, qcoeff -4, embedded 0, bit_index 381 / 83886104
+[COEF_HIDE] eob 44, idx 29, dqcoeff -225, qcoeff -3, embedded 1, bit_index 382 / 83886104
+[COEF_HIDE] eob 44, idx 42, dqcoeff -375, qcoeff -5, embedded 1, bit_index 383 / 83886104
+[COEF_HIDE] eob 44, idx 41, dqcoeff 225, qcoeff 3, embedded 1, bit_index 384 / 83886104
+[COEF_HIDE] eob 44, idx 25, dqcoeff 300, qcoeff 4, embedded 0, bit_index 385 / 83886104
+[COEF_HIDE] eob 42, idx 24, dqcoeff -300, qcoeff -4, embedded 0, bit_index 386 / 83886104
+[COEF_HIDE] eob 44, idx 24, dqcoeff -300, qcoeff -4, embedded 0, bit_index 387 / 83886104
+[COEF_HIDE] eob 48, idx 27, dqcoeff 525, qcoeff 7, embedded 1, bit_index 388 / 83886104
+[COEF_HIDE] eob 48, idx 26, dqcoeff -225, qcoeff -3, embedded 1, bit_index 389 / 83886104
+[COEF_HIDE] eob 127, idx 63, dqcoeff -300, qcoeff -4, embedded 0, bit_index 390 / 83886104
+[COEF_HIDE] eob 44, idx 27, dqcoeff 525, qcoeff 7, embedded 1, bit_index 391 / 83886104
+[COEF_HIDE] eob 54, idx 42, dqcoeff -225, qcoeff -3, embedded 1, bit_index 392 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff -375, qcoeff -5, embedded 1, bit_index 393 / 83886104
+[COEF_HIDE] eob 44, idx 26, dqcoeff 300, qcoeff 4, embedded 0, bit_index 394 / 83886104
+[COEF_HIDE] eob 44, idx 29, dqcoeff -225, qcoeff -3, embedded 1, bit_index 395 / 83886104
+[COEF_HIDE] eob 44, idx 26, dqcoeff -375, qcoeff -5, embedded 1, bit_index 396 / 83886104
+[COEF_HIDE] eob 81, idx 42, dqcoeff 225, qcoeff 3, embedded 1, bit_index 397 / 83886104
+[COEF_HIDE] eob 79, idx 46, dqcoeff 300, qcoeff 4, embedded 0, bit_index 398 / 83886104
+[COEF_HIDE] eob 49, idx 24, dqcoeff 375, qcoeff 5, embedded 1, bit_index 399 / 83886104
+[COEF_HIDE] eob 49, idx 35, dqcoeff -225, qcoeff -3, embedded 1, bit_index 400 / 83886104
+[COEF_HIDE] eob 39, idx 21, dqcoeff -300, qcoeff -4, embedded 0, bit_index 401 / 83886104
+[COEF_HIDE] eob 39, idx 20, dqcoeff 300, qcoeff 4, embedded 0, bit_index 402 / 83886104
+[COEF_HIDE] eob 34, idx 20, dqcoeff -300, qcoeff -4, embedded 0, bit_index 403 / 83886104
+[COEF_HIDE] eob 61, idx 37, dqcoeff -225, qcoeff -3, embedded 1, bit_index 404 / 83886104
+[COEF_HIDE] eob 61, idx 30, dqcoeff 225, qcoeff 3, embedded 1, bit_index 405 / 83886104
+[COEF_HIDE] eob 33, idx 19, dqcoeff -300, qcoeff -4, embedded 0, bit_index 406 / 83886104
+[COEF_HIDE] eob 39, idx 19, dqcoeff 225, qcoeff 3, embedded 1, bit_index 407 / 83886104
+[COEF_HIDE] eob 73, idx 46, dqcoeff 225, qcoeff 3, embedded 1, bit_index 408 / 83886104
+[COEF_HIDE] eob 73, idx 41, dqcoeff -375, qcoeff -5, embedded 1, bit_index 409 / 83886104
+[COEF_HIDE] eob 47, idx 41, dqcoeff 375, qcoeff 5, embedded 1, bit_index 410 / 83886104
+[COEF_HIDE] eob 47, idx 31, dqcoeff -300, qcoeff -4, embedded 0, bit_index 411 / 83886104
+[COEF_HIDE] eob 46, idx 25, dqcoeff -450, qcoeff -6, embedded 0, bit_index 412 / 83886104
+[COEF_HIDE] eob 48, idx 31, dqcoeff 300, qcoeff 4, embedded 0, bit_index 413 / 83886104
+[COEF_HIDE] eob 48, idx 30, dqcoeff 300, qcoeff 4, embedded 0, bit_index 414 / 83886104
+[COEF_HIDE] eob 55, idx 30, dqcoeff 225, qcoeff 3, embedded 1, bit_index 415 / 83886104
+[COEF_HIDE] eob 46, idx 24, dqcoeff 300, qcoeff 4, embedded 0, bit_index 416 / 83886104
+[COEF_HIDE] eob 45, idx 36, dqcoeff -300, qcoeff -4, embedded 0, bit_index 417 / 83886104
+[COEF_HIDE] eob 45, idx 29, dqcoeff 225, qcoeff 3, embedded 1, bit_index 418 / 83886104
+[COEF_HIDE] eob 61, idx 30, dqcoeff -300, qcoeff -4, embedded 0, bit_index 419 / 83886104
+[COEF_HIDE] eob 122, idx 67, dqcoeff -300, qcoeff -4, embedded 0, bit_index 420 / 83886104
+[COEF_HIDE] eob 122, idx 65, dqcoeff -300, qcoeff -4, embedded 0, bit_index 421 / 83886104
+[COEF_HIDE] eob 39, idx 26, dqcoeff 225, qcoeff 3, embedded 1, bit_index 422 / 83886104
+[COEF_HIDE] eob 39, idx 24, dqcoeff 225, qcoeff 3, embedded 1, bit_index 423 / 83886104
+[COEF_HIDE] eob 44, idx 28, dqcoeff 225, qcoeff 3, embedded 1, bit_index 424 / 83886104
+[COEF_HIDE] eob 44, idx 25, dqcoeff -300, qcoeff -4, embedded 0, bit_index 425 / 83886104
+[COEF_HIDE] eob 44, idx 24, dqcoeff 225, qcoeff 3, embedded 1, bit_index 426 / 83886104
+[COEF_HIDE] eob 48, idx 37, dqcoeff 225, qcoeff 3, embedded 1, bit_index 427 / 83886104
+[COEF_HIDE] eob 48, idx 31, dqcoeff 450, qcoeff 6, embedded 0, bit_index 428 / 83886104
+[COEF_HIDE] eob 44, idx 42, dqcoeff 225, qcoeff 3, embedded 1, bit_index 429 / 83886104
+[COEF_HIDE] eob 44, idx 27, dqcoeff -300, qcoeff -4, embedded 0, bit_index 430 / 83886104
+[COEF_HIDE] eob 149, idx 114, dqcoeff 225, qcoeff 3, embedded 1, bit_index 431 / 83886104
+[COEF_HIDE] eob 149, idx 86, dqcoeff -300, qcoeff -4, embedded 0, bit_index 432 / 83886104
+[COEF_HIDE] eob 33, idx 18, dqcoeff -300, qcoeff -4, embedded 0, bit_index 433 / 83886104
+[COEF_HIDE] eob 46, idx 30, dqcoeff 300, qcoeff 4, embedded 0, bit_index 434 / 83886104
+[COEF_HIDE] eob 46, idx 23, dqcoeff -300, qcoeff -4, embedded 0, bit_index 435 / 83886104
+[COEF_HIDE] eob 90, idx 68, dqcoeff 300, qcoeff 4, embedded 0, bit_index 436 / 83886104
+[COEF_HIDE] eob 90, idx 47, dqcoeff 300, qcoeff 4, embedded 0, bit_index 437 / 83886104
+K
+
+[COEF_HIDE] eob 54, idx 29, dqcoeff -300, qcoeff -4, embedded 0, bit_index 438 / 83886104
+[COEF_HIDE] eob 43, idx 27, dqcoeff -375, qcoeff -5, embedded 1, bit_index 439 / 83886104
+[COEF_HIDE] eob 96, idx 63, dqcoeff -225, qcoeff -3, embedded 1, bit_index 440 / 83886104
+[COEF_HIDE] eob 96, idx 48, dqcoeff -300, qcoeff -4, embedded 0, bit_index 441 / 83886104
+[COEF_HIDE] eob 41, idx 25, dqcoeff 225, qcoeff 3, embedded 1, bit_index 442 / 83886104
+[COEF_HIDE] eob 41, idx 21, dqcoeff 375, qcoeff 5, embedded 1, bit_index 443 / 83886104
+[COEF_HIDE] eob 37, idx 35, dqcoeff 225, qcoeff 3, embedded 1, bit_index 444 / 83886104
+[COEF_HIDE] eob 37, idx 28, dqcoeff -300, qcoeff -4, embedded 0, bit_index 445 / 83886104
+[COEF_HIDE] eob 48, idx 39, dqcoeff -225, qcoeff -3, embedded 1, bit_index 446 / 83886104
+[COEF_HIDE] eob 48, idx 38, dqcoeff -225, qcoeff -3, embedded 1, bit_index 447 / 83886104
+[COEF_HIDE] eob 68, idx 35, dqcoeff -300, qcoeff -4, embedded 0, bit_index 448 / 83886104
+[COEF_HIDE] eob 68, idx 34, dqcoeff 225, qcoeff 3, embedded 1, bit_index 449 / 83886104
+[COEF_HIDE] eob 42, idx 27, dqcoeff 300, qcoeff 4, embedded 0, bit_index 450 / 83886104
+[COEF_HIDE] eob 42, idx 26, dqcoeff 225, qcoeff 3, embedded 1, bit_index 451 / 83886104
+[COEF_HIDE] eob 34, idx 25, dqcoeff -225, qcoeff -3, embedded 1, bit_index 452 / 83886104
+[COEF_HIDE] eob 34, idx 18, dqcoeff -300, qcoeff -4, embedded 0, bit_index 453 / 83886104
+[COEF_HIDE] eob 64, idx 52, dqcoeff 375, qcoeff 5, embedded 1, bit_index 454 / 83886104
+[COEF_HIDE] eob 64, idx 45, dqcoeff 225, qcoeff 3, embedded 1, bit_index 455 / 83886104
+[COEF_HIDE] eob 66, idx 45, dqcoeff 450, qcoeff 6, embedded 0, bit_index 456 / 83886104
+[COEF_HIDE] eob 66, idx 44, dqcoeff -300, qcoeff -4, embedded 0, bit_index 457 / 83886104
+[COEF_HIDE] eob 52, idx 39, dqcoeff 300, qcoeff 4, embedded 0, bit_index 458 / 83886104
+[COEF_HIDE] eob 52, idx 38, dqcoeff -300, qcoeff -4, embedded 0, bit_index 459 / 83886104
+[COEF_HIDE] eob 43, idx 29, dqcoeff 300, qcoeff 4, embedded 0, bit_index 460 / 83886104
+[COEF_HIDE] eob 33, idx 26, dqcoeff 225, qcoeff 3, embedded 1, bit_index 461 / 83886104
+[COEF_HIDE] eob 33, idx 24, dqcoeff -300, qcoeff -4, embedded 0, bit_index 462 / 83886104
+[COEF_HIDE] eob 48, idx 41, dqcoeff -225, qcoeff -3, embedded 1, bit_index 463 / 83886104
+[COEF_HIDE] eob 48, idx 27, dqcoeff 225, qcoeff 3, embedded 1, bit_index 464 / 83886104
+[COEF_HIDE] eob 46, idx 25, dqcoeff 300, qcoeff 4, embedded 0, bit_index 465 / 83886104
+[COEF_HIDE] eob 46, idx 30, dqcoeff -300, qcoeff -4, embedded 0, bit_index 466 / 83886104
+[COEF_HIDE] eob 46, idx 29, dqcoeff 225, qcoeff 3, embedded 1, bit_index 467 / 83886104
+[COEF_HIDE] eob 46, idx 27, dqcoeff 450, qcoeff 6, embedded 0, bit_index 468 / 83886104
+[COEF_HIDE] eob 54, idx 42, dqcoeff -300, qcoeff -4, embedded 0, bit_index 469 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff -375, qcoeff -5, embedded 1, bit_index 470 / 83886104
+[COEF_HIDE] eob 38, idx 19, dqcoeff -225, qcoeff -3, embedded 1, bit_index 471 / 83886104
+[COEF_HIDE] eob 157, idx 86, dqcoeff 225, qcoeff 3, embedded 1, bit_index 472 / 83886104
+[COEF_HIDE] eob 157, idx 83, dqcoeff -225, qcoeff -3, embedded 1, bit_index 473 / 83886104
+[COEF_HIDE] eob 41, idx 20, dqcoeff -225, qcoeff -3, embedded 1, bit_index 474 / 83886104
+[COEF_HIDE] eob 55, idx 39, dqcoeff -300, qcoeff -4, embedded 0, bit_index 475 / 83886104
+[COEF_HIDE] eob 55, idx 38, dqcoeff -450, qcoeff -6, embedded 0, bit_index 476 / 83886104
+[COEF_HIDE] eob 39, idx 22, dqcoeff -225, qcoeff -3, embedded 1, bit_index 477 / 83886104
+[COEF_HIDE] eob 39, idx 21, dqcoeff -300, qcoeff -4, embedded 0, bit_index 478 / 83886104
+[COEF_HIDE] eob 71, idx 63, dqcoeff 225, qcoeff 3, embedded 1, bit_index 479 / 83886104
+[COEF_HIDE] eob 71, idx 43, dqcoeff 300, qcoeff 4, embedded 0, bit_index 480 / 83886104
+[COEF_HIDE] eob 54, idx 41, dqcoeff 450, qcoeff 6, embedded 0, bit_index 481 / 83886104
+[COEF_HIDE] eob 54, idx 27, dqcoeff -225, qcoeff -3, embedded 1, bit_index 482 / 83886104
+[COEF_HIDE] eob 46, idx 25, dqcoeff 225, qcoeff 3, embedded 1, bit_index 483 / 83886104
+[COEF_HIDE] eob 46, idx 23, dqcoeff -225, qcoeff -3, embedded 1, bit_index 484 / 83886104
+[COEF_HIDE] eob 45, idx 36, dqcoeff 300, qcoeff 4, embedded 0, bit_index 485 / 83886104
+[COEF_HIDE] eob 45, idx 35, dqcoeff 300, qcoeff 4, embedded 0, bit_index 486 / 83886104
+[COEF_HIDE] eob 45, idx 23, dqcoeff -225, qcoeff -3, embedded 1, bit_index 487 / 83886104
+[COEF_HIDE] eob 46, idx 31, dqcoeff 375, qcoeff 5, embedded 1, bit_index 488 / 83886104
+[COEF_HIDE] eob 46, idx 29, dqcoeff -300, qcoeff -4, embedded 0, bit_index 489 / 83886104
+[COEF_HIDE] eob 39, idx 23, dqcoeff -300, qcoeff -4, embedded 0, bit_index 490 / 83886104
+[COEF_HIDE] eob 52, idx 44, dqcoeff 225, qcoeff 3, embedded 1, bit_index 491 / 83886104
+[COEF_HIDE] eob 64, idx 48, dqcoeff -225, qcoeff -3, embedded 1, bit_index 492 / 83886104
+[COEF_HIDE] eob 38, idx 22, dqcoeff 300, qcoeff 4, embedded 0, bit_index 493 / 83886104
+[COEF_HIDE] eob 32, idx 16, dqcoeff -300, qcoeff -4, embedded 0, bit_index 494 / 83886104
+[COEF_HIDE] eob 36, idx 26, dqcoeff 300, qcoeff 4, embedded 0, bit_index 495 / 83886104
+[COEF_HIDE] eob 36, idx 25, dqcoeff 225, qcoeff 3, embedded 1, bit_index 496 / 83886104
+[COEF_HIDE] eob 46, idx 25, dqcoeff -300, qcoeff -4, embedded 0, bit_index 497 / 83886104
+[COEF_HIDE] eob 53, idx 26, dqcoeff 225, qcoeff 3, embedded 1, bit_index 498 / 83886104
+[COEF_HIDE] eob 43, idx 24, dqcoeff 225, qcoeff 3, embedded 1, bit_index 499 / 83886104
+[COEF_HIDE] eob 43, idx 23, dqcoeff -300, qcoeff -4, embedded 0, bit_index 500 / 83886104
+[COEF_HIDE] eob 46, idx 42, dqcoeff 225, qcoeff 3, embedded 1, bit_index 501 / 83886104
+[COEF_HIDE] eob 46, idx 26, dqcoeff 300, qcoeff 4, embedded 0, bit_index 502 / 83886104
+[COEF_HIDE] eob 126, idx 89, dqcoeff 225, qcoeff 3, embedded 1, bit_index 503 / 83886104
+[COEF_HIDE] eob 126, idx 66, dqcoeff -300, qcoeff -4, embedded 0, bit_index 504 / 83886104
+[COEF_HIDE] eob 33, idx 18, dqcoeff 300, qcoeff 4, embedded 0, bit_index 505 / 83886104
+K
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+
+Processed 300 frames.

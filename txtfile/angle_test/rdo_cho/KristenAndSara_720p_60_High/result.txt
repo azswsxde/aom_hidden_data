@@ -1,0 +1,11 @@
+Folder 1: /home/mark/500GB/testdata/ori_video/KristenAndSara_720p_60_High/KristenAndSara_720p_60_High_hidden_test
+Folder 2: KristenAndSara_720p_60_High_hidden_test
+圖片總數: 300
+有效比較數量: 300
+平均 PSNR（排除 inf）: 43.39 dB
+inf 數量: 0，佔比: 0.00%
+平均 SSIM: 0.98455
+平均 Edge Difference: 1.3539
+平均 Gradient Difference: 2.3515
+平均 FFT Difference: 635.8649
+平均 Color Shift: 0.8251

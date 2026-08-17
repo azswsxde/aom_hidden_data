@@ -1,0 +1,11 @@
+Folder 1: /home/mark/500GB/testdata/ori_video/FourPeople_720p_60_High/FourPeople_720p_60_High_hidden_test
+Folder 2: FourPeople_720p_60_High_hidden_test
+圖片總數: 300
+有效比較數量: 300
+平均 PSNR（排除 inf）: 42.19 dB
+inf 數量: 0，佔比: 0.00%
+平均 SSIM: 0.98335
+平均 Edge Difference: 1.7348
+平均 Gradient Difference: 3.0083
+平均 FFT Difference: 739.7667
+平均 Color Shift: 1.0672

@@ -1,0 +1,3 @@
+Using AOMedia Project AV1 Decoder v3.11.0
+Processed 300 frames.
+Play: ffplay -f rawvideo -pix_fmt yuv420p -s 1280x720 FourPeople_720p_60_Low_hidden_test.yuv

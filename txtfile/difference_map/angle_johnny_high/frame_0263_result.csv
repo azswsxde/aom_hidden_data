@@ -1,0 +1,4 @@
+﻿frame,method,MSE,PSNR,Different_Pixels,Different_Pixel_Ratio,Mean_Abs_Diff,Max_Abs_Diff,Diff_Scale,Clean_YUV,Steg_YUV
+263,Basic,1.7510405815972223,45.69784149587713,449499,0.48773763020833333,0.776826171875,16,8,D:\碩士實驗\testdata\ori_video\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv,D:\碩士實驗\testdata\angle_test\catania\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv
+263,Center,1.7603179253472223,45.67489249443121,451846,0.4902842881944444,0.7802506510416667,17,8,D:\碩士實驗\testdata\ori_video\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv,D:\碩士實驗\testdata\angle_test\center\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv
+263,Adaptive_RDO,1.7440679253472222,45.715169656905026,444758,0.4825933159722222,0.7712641059027778,14,8,D:\碩士實驗\testdata\ori_video\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv,D:\碩士實驗\testdata\angle_test\rdo_cho\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv

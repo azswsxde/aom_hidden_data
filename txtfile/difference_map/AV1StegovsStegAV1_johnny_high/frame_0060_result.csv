@@ -1,0 +1,3 @@
+﻿frame,method,MSE,PSNR,Different_Pixels,Different_Pixel_Ratio,Mean_Abs_Diff,Max_Abs_Diff,Diff_Scale,Clean_YUV,Steg_YUV
+60,AV1Stego,124.22627712673611,27.18866890598313,750442,0.8142816840277778,7.299951171875,181,2,D:\碩士實驗\testdata\ori_video\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv,D:\碩士實驗\testdata\AV1Stego\1024\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv
+60,StegAV1,1.1609027777777778,47.48284510502816,467452,0.5072178819444444,0.6877495659722223,15,2,D:\碩士實驗\testdata\ori_video\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv,D:\碩士實驗\testdata\StegAV1\1024\Johnny_720p_60_High\Johnny_720p_60_High_hidden_test.yuv

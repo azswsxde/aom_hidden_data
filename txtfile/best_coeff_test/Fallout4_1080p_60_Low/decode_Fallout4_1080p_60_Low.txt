@@ -1,0 +1,33 @@
+Using AOMedia Project AV1 Decoder v3.11.0
+[COEF_READ] injected 0, total_bits 1, payload_bits 1, keyword_buffer 000000, end_found 0
+[COEF_READ] injected 1, total_bits 2, payload_bits 2, keyword_buffer 000001, end_found 0
+[COEF_READ] injected 0, total_bits 3, payload_bits 3, keyword_buffer 000002, end_found 0
+[COEF_READ] injected 0, total_bits 4, payload_bits 4, keyword_buffer 000004, end_found 0
+[COEF_READ] injected 1, total_bits 5, payload_bits 5, keyword_buffer 000009, end_found 0
+[COEF_READ] injected 0, total_bits 6, payload_bits 6, keyword_buffer 000012, end_found 0
+[COEF_READ] injected 0, total_bits 7, payload_bits 7, keyword_buffer 000024, end_found 0
+[COEF_READ] injected 1, total_bits 8, payload_bits 8, keyword_buffer 000049, end_found 0
+[COEF_READ] injected 1, total_bits 9, payload_bits 9, keyword_buffer 000093, end_found 0
+[COEF_READ] injected 0, total_bits 10, payload_bits 10, keyword_buffer 000126, end_found 0
+[COEF_READ] injected 1, total_bits 11, payload_bits 11, keyword_buffer 00024D, end_found 0
+[COEF_READ] injected 1, total_bits 12, payload_bits 12, keyword_buffer 00049B, end_found 0
+[COEF_READ] injected 0, total_bits 13, payload_bits 13, keyword_buffer 000936, end_found 0
+[COEF_READ] injected 0, total_bits 14, payload_bits 14, keyword_buffer 00126C, end_found 0
+[COEF_READ] injected 0, total_bits 15, payload_bits 15, keyword_buffer 0024D8, end_found 0
+[COEF_READ] injected 0, total_bits 16, payload_bits 16, keyword_buffer 0049B0, end_found 0
+[COEF_READ] injected 1, total_bits 17, payload_bits 17, keyword_buffer 009361, end_found 0
+[COEF_READ] injected 1, total_bits 18, payload_bits 18, keyword_buffer 0126C3, end_found 0
+[COEF_READ] injected 1, total_bits 19, payload_bits 19, keyword_buffer 024D87, end_found 0
+[COEF_READ] injected 1, total_bits 20, payload_bits 20, keyword_buffer 049B0F, end_found 0
+[COEF_READ] injected 1, total_bits 21, payload_bits 21, keyword_buffer 09361F, end_found 0
+[COEF_READ] injected 1, total_bits 22, payload_bits 22, keyword_buffer 126C3F, end_found 0
+[COEF_READ] injected 1, total_bits 23, payload_bits 23, keyword_buffer 24D87F, end_found 0
+[COEF_READ] injected 1, total_bits 24, payload_bits 24, keyword_buffer 49B0FF, end_found 0
+[COEF_READ] injected 0, total_bits 25, payload_bits 25, keyword_buffer 9361FE, end_found 0
+[COEF_READ] injected 1, total_bits 26, payload_bits 26, keyword_buffer 26C3FD, end_found 0
+[COEF_READ] injected 1, total_bits 27, payload_bits 27, keyword_buffer 4D87FB, end_found 0
+[COEF_READ] injected 0, total_bits 28, payload_bits 28, keyword_buffer 9B0FF6, end_found 0
+[COEF_READ] injected 0, total_bits 29, payload_bits 29, keyword_buffer 361FEC, end_found 0
+[COEF_READ] injected 0, total_bits 30, payload_bits 30, keyword_buffer 6C3FD8, end_found 0
+Processed 300 frames.
+Play: ffplay -f rawvideo -pix_fmt yuv420p -s 1920x1080 Fallout4_1080p_60_Low_hidden_test.yuv

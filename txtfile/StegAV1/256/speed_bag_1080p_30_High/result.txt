@@ -1,0 +1,11 @@
+Folder 1: /home/mark/500GB/testdata/ori_video/speed_bag_1080p_30_High/speed_bag_1080p_30_High_hidden_test
+Folder 2: speed_bag_1080p_30_High_hidden_test
+圖片總數: 150
+有效比較數量: 150
+平均 PSNR（排除 inf）: 44.65 dB
+inf 數量: 90，佔比: 60.00%
+平均 SSIM: 0.99421
+平均 Edge Difference: 0.3880
+平均 Gradient Difference: 0.7202
+平均 FFT Difference: 331.1112
+平均 Color Shift: 0.3008
